@@ -1,0 +1,142 @@
+package peterandrewshadee.cs190i.cs.ucsb.edu.ripple;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+/**
+ * Created by peterwerner on 6/1/17.
+ */
+
+public class MusicBarFragment extends Fragment implements StationState.CurrentStationUpdateListener {
+
+    private ToggleButton playPauseButton, addRemoveButton;
+    private TextView textSong, textArtist, textCaption;
+    private View progressBar;
+    private TimerTask timerTask = null; // Task to periodically update the progress bar
+    private Long timeLastUpdated = null;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.fragment_musicbar, container, false);
+
+        playPauseButton = (ToggleButton) view.findViewById(R.id.musicbar_toggle_playpause);
+        addRemoveButton = (ToggleButton) view.findViewById(R.id.musicbar_toggle_addremove);
+        textSong = (TextView) view.findViewById(R.id.musicbar_text_song);
+        textArtist = (TextView) view.findViewById(R.id.musicbar_text_artist);
+        textCaption = (TextView) view.findViewById(R.id.musicbar_text_caption);
+        progressBar = view.findViewById(R.id.musicbar_progressbar);
+
+        playPauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StationState.userWantsToPlay = playPauseButton.isChecked();
+                StationState.NotifyCurrentStationDataChanged();
+            }
+        });
+
+        addRemoveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // TODO: make this button add / remove from spotify library
+
+                Toast.makeText(getContext(), "Should add / remove from spotify library", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        // Update the progress bar every 50ms
+        final Timer timer = new Timer();
+        timerTask = new TimerTask() {
+            @Override
+            public void run()
+            {
+                long currTime = System.currentTimeMillis();
+                if (timeLastUpdated != null) {
+                    long deltaTime = currTime - timeLastUpdated;
+                    if (StationState.currentStation != null && StationState.currentStation.isPlaying) {
+                        StationState.currentStation.songProgressSeconds += 0.001f * deltaTime;
+                    }
+                    UpdateProgressBarFromOtherThread();
+                }
+                timeLastUpdated = currTime;
+            }
+        };
+        timer.schedule(timerTask, 0, 50);
+
+        StationState.SubscribeToCurrentStationUpdates(this);
+
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        timerTask.cancel();
+
+        StationState.UnsubscribeFromCurrentStationUpdates(this);
+    }
+
+    /*
+     * Currently playing song events
+     */
+
+    private void UpdateStationState(StationState stationState, boolean userWantsToPlay) {
+        textSong.setText(SanitizeString(stationState.songTitle));
+        textArtist.setText(SanitizeString(stationState.songArtist));
+        textCaption.setText(SanitizeString(stationState.userName + " and " + stationState.listenerIds.size() + " listeners"));
+
+        playPauseButton.setEnabled(stationState.isPlaying);
+        playPauseButton.setChecked(StationState.userWantsToPlay);
+
+        playPauseButton.setAlpha(playPauseButton.isEnabled() ? 1 : 0.5f);
+        addRemoveButton.setAlpha(addRemoveButton.isEnabled() ? 1 : 0.5f);
+    }
+
+    private void UpdateProgressBarFromOtherThread () {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                UpdateProgressBar();
+            }
+        });
+    }
+    private void UpdateProgressBar () {
+        LinearLayout.LayoutParams progressBarParams = (LinearLayout.LayoutParams) progressBar.getLayoutParams();
+        progressBarParams.weight = StationState.currentStation != null
+                ? (float) (StationState.currentStation.songProgressSeconds / StationState.currentStation.songDurationSeconds)
+                : 0;
+        progressBar.setLayoutParams(progressBarParams);
+    }
+
+    private String SanitizeString (String s) {
+        return s != null && s.length() > 0 ? s : "-";
+    }
+
+    @Override
+    public void OnStationStart() {}
+
+    @Override
+    public void OnSongChange(StationState stationState, boolean userWantsToPlay) {
+        UpdateStationState (stationState, userWantsToPlay);
+    }
+
+    @Override
+    public void OnSongUpdate(StationState stationState, boolean userWantsToPlay) {
+        UpdateStationState (stationState, userWantsToPlay);
+    }
+
+    @Override
+    public void OnStationDie() {}
+}
