@@ -29,6 +29,20 @@ public class BroadcastIntroFragment extends Fragment {
 
                     // TODO: start broadcasting
 
+                    // TODO: remove this test code
+                    // TEST CODE
+                    StationState.UpdateBroadcastStation(new StationState(
+                            null,
+                            "Peter Werner",
+                            null,
+                            "Piledriver Waltz",
+                            "Alex Turner",
+                            true,
+                            30,
+                            0,
+                            new HashSet<String>()
+                    ));
+
                 } else {
                     Toast.makeText(v.getContext(), "You must have the Spotify app installed.", Toast.LENGTH_SHORT).show();
                 }

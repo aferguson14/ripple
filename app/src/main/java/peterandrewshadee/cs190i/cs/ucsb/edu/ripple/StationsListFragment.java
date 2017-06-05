@@ -28,9 +28,9 @@ public class StationsListFragment extends Fragment {
         ((Button) view.findViewById(R.id.test_button_togglebroadcasteractive)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (StationState.currentStation == null) {
+                if (StationState.listeningStation == null) {
                     // Make it look like we're playing a song
-                    StationState.UpdateCurrentStation(new StationState(
+                    StationState.UpdateListeningStation(new StationState(
                             null,
                             "Peter Werner",
                             null,
@@ -43,16 +43,16 @@ public class StationsListFragment extends Fragment {
                     ));
                 } else {
                     // Close the song
-                    StationState.UpdateCurrentStation(null);
+                    StationState.UpdateListeningStation(null);
                 }
             }
         });
         ((Button) view.findViewById(R.id.test_button_togglebroadcasterpaused)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (StationState.currentStation != null) {
-                    StationState.currentStation.isPlaying = !StationState.currentStation.isPlaying;
-                    StationState.NotifyCurrentStationDataChanged();
+                if (StationState.listeningStation != null) {
+                    StationState.listeningStation.isPlaying = !StationState.listeningStation.isPlaying;
+                    StationState.NotifyListeningStationDataChanged();
                 }
             }
         });

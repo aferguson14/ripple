@@ -17,7 +17,7 @@ import java.util.TimerTask;
  * Created by peterwerner on 6/1/17.
  */
 
-public class MusicBarFragment extends Fragment implements StationState.CurrentStationUpdateListener {
+public class MusicBarFragment extends Fragment implements StationState.ListeningStationUpdateListener {
 
     private ToggleButton playPauseButton, addRemoveButton;
     private TextView textSong, textArtist, textCaption;
@@ -40,7 +40,7 @@ public class MusicBarFragment extends Fragment implements StationState.CurrentSt
             @Override
             public void onClick(View v) {
                 StationState.userWantsToPlay = playPauseButton.isChecked();
-                StationState.NotifyCurrentStationDataChanged();
+                StationState.NotifyListeningStationDataChanged();
             }
         });
 
@@ -64,8 +64,8 @@ public class MusicBarFragment extends Fragment implements StationState.CurrentSt
                 long currTime = System.currentTimeMillis();
                 if (timeLastUpdated != null) {
                     long deltaTime = currTime - timeLastUpdated;
-                    if (StationState.currentStation != null && StationState.currentStation.isPlaying) {
-                        StationState.currentStation.songProgressSeconds += 0.001f * deltaTime;
+                    if (StationState.listeningStation != null && StationState.listeningStation.isPlaying) {
+                        StationState.listeningStation.songProgressSeconds += 0.001f * deltaTime;
                     }
                     UpdateProgressBarFromOtherThread();
                 }
@@ -74,7 +74,7 @@ public class MusicBarFragment extends Fragment implements StationState.CurrentSt
         };
         timer.schedule(timerTask, 0, 50);
 
-        StationState.SubscribeToCurrentStationUpdates(this);
+        StationState.SubscribeToListeningStationUpdates(this);
 
         return view;
     }
@@ -85,7 +85,7 @@ public class MusicBarFragment extends Fragment implements StationState.CurrentSt
 
         timerTask.cancel();
 
-        StationState.UnsubscribeFromCurrentStationUpdates(this);
+        StationState.UnsubscribeFromListeningStationUpdates(this);
     }
 
     /*
@@ -114,8 +114,8 @@ public class MusicBarFragment extends Fragment implements StationState.CurrentSt
     }
     private void UpdateProgressBar () {
         LinearLayout.LayoutParams progressBarParams = (LinearLayout.LayoutParams) progressBar.getLayoutParams();
-        progressBarParams.weight = StationState.currentStation != null
-                ? (float) (StationState.currentStation.songProgressSeconds / StationState.currentStation.songDurationSeconds)
+        progressBarParams.weight = StationState.listeningStation != null
+                ? (float) (StationState.listeningStation.songProgressSeconds / StationState.listeningStation.songDurationSeconds)
                 : 0;
         progressBar.setLayoutParams(progressBarParams);
     }
@@ -125,18 +125,18 @@ public class MusicBarFragment extends Fragment implements StationState.CurrentSt
     }
 
     @Override
-    public void OnStationStart() {}
+    public void OnListeningStationStart() {}
 
     @Override
-    public void OnSongChange(StationState stationState, boolean userWantsToPlay) {
-        UpdateStationState (stationState, userWantsToPlay);
+    public void OnListeningSongChange(StationState stationState) {
+        UpdateStationState (stationState, StationState.userWantsToPlay);
     }
 
     @Override
-    public void OnSongUpdate(StationState stationState, boolean userWantsToPlay) {
-        UpdateStationState (stationState, userWantsToPlay);
+    public void OnListeningSongUpdate(StationState stationState) {
+        UpdateStationState (stationState, StationState.userWantsToPlay);
     }
 
     @Override
-    public void OnStationDie() {}
+    public void OnListeningStationDie() {}
 }

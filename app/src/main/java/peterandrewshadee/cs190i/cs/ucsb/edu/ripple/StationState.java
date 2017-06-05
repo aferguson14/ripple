@@ -57,60 +57,132 @@ public class StationState {
      */
 
     // Updates to the station the user is currently listening to
-    public interface CurrentStationUpdateListener {
-        void OnStationStart ();
-        void OnSongChange (StationState stationState, boolean userWantsToPlay);
-        void OnSongUpdate (StationState stationState, boolean userWantsToPlay);
-        void OnStationDie ();
+    public interface ListeningStationUpdateListener {
+        void OnListeningStationStart();
+        void OnListeningSongChange(StationState stationState);
+        void OnListeningSongUpdate(StationState stationState);
+        void OnListeningStationDie();
     }
 
-    static StationState currentStation = null;
-    static boolean userWantsToPlay = true; // True if the user wants to play (still might not play if the broadcaster pauses)
-    private static List<CurrentStationUpdateListener> currentListeners = new ArrayList<>();
-
-    public static void SubscribeToCurrentStationUpdates (CurrentStationUpdateListener listener) {
-        currentListeners.add(listener);
+    // Updates to the station the user is broadcasting
+    public interface BroadcastStationUpdateListener {
+        void OnBroadcastStationStart();
+        void OnBroadcastSongChange(StationState stationState);
+        void OnBroadcastSongUpdate(StationState stationState);
+        void OnBroadcastStationDie();
     }
 
-    public static void UnsubscribeFromCurrentStationUpdates (CurrentStationUpdateListener listener) {
-        currentListeners.remove(listener);
+    static StationState listeningStation = null; // Station the user is listening to (ie: someone else's broadcast)
+    static StationState broadcastStation = null; // Station the user is broadcasting
+    static boolean userWantsToPlay = true; // True if the user wants to play the listeningStation's song (still won't play if the broadcaster pauses)
+    private static List<ListeningStationUpdateListener> listeningStationListeners = new ArrayList<>();
+    private static List<BroadcastStationUpdateListener> broadcastStationListeners = new ArrayList<>();
+
+    // Listening station
+
+    public static void SubscribeToListeningStationUpdates(ListeningStationUpdateListener listener) {
+        listeningStationListeners.add(listener);
     }
 
-    public static void NotifyCurrentStationDataChanged() {
-        UpdateCurrentStation(currentStation);
+    public static void UnsubscribeFromListeningStationUpdates(ListeningStationUpdateListener listener) {
+        listeningStationListeners.remove(listener);
     }
-    public static void UpdateCurrentStation (StationState _stationState) {
-        StationState prevStation = currentStation;
-        if (_stationState != null) {
-            currentStation = new StationState(_stationState);
-        } else {
-            currentStation = null;
+
+    public static void NotifyListeningStationDataChanged() {
+        UpdateListeningStation(listeningStation);
+    }
+
+    public static void UpdateListeningStation(StationState newStation) {
+        StationState prevStation = null;
+        if (listeningStation != null) {
+            new StationState(listeningStation);
         }
 
-        if (_stationState == null) {
-            for (CurrentStationUpdateListener listener : currentListeners) {
-                listener.OnStationDie();
+        if (newStation != null) {
+            listeningStation = new StationState(newStation);
+        } else {
+            listeningStation = null;
+        }
+
+        if (newStation == null) {
+            for (ListeningStationUpdateListener listener : listeningStationListeners) {
+                listener.OnListeningStationDie();
             }
             userWantsToPlay = true;
         }
         else if (prevStation == null) {
-            for (CurrentStationUpdateListener listener : currentListeners) {
-                listener.OnStationStart();
+            for (ListeningStationUpdateListener listener : listeningStationListeners) {
+                listener.OnListeningStationStart();
             }
-            for (CurrentStationUpdateListener listener : currentListeners) {
-                listener.OnSongChange(currentStation, userWantsToPlay);
+            for (ListeningStationUpdateListener listener : listeningStationListeners) {
+                listener.OnListeningSongChange(listeningStation);
             }
         }
         else {
-            if (prevStation.IsDifferentSong(currentStation)) {
-                for (CurrentStationUpdateListener listener : currentListeners) {
-                    listener.OnSongChange(currentStation, userWantsToPlay);
+            if (prevStation.IsDifferentSong(listeningStation)) {
+                for (ListeningStationUpdateListener listener : listeningStationListeners) {
+                    listener.OnListeningSongChange(listeningStation);
                 }
             } else {
-                for (CurrentStationUpdateListener listener : currentListeners) {
-                    listener.OnSongUpdate(currentStation, userWantsToPlay);
+                for (ListeningStationUpdateListener listener : listeningStationListeners) {
+                    listener.OnListeningSongUpdate(listeningStation);
                 }
             }
         }
     }
+
+    // Broadcasting station
+
+    public static void SubscribeToBroadcastStationUpdates(BroadcastStationUpdateListener listener) {
+        broadcastStationListeners.add(listener);
+    }
+
+    public static void UnsubscribeFromBroadcastStationUpdates(BroadcastStationUpdateListener listener) {
+        broadcastStationListeners.remove(listener);
+    }
+
+    public static void NotifyBroadcastStationDataChanged() {
+        UpdateBroadcastStation(broadcastStation);
+    }
+
+    public static void UpdateBroadcastStation (StationState newStation) {
+        StationState prevStation = null;
+        if (broadcastStation != null) {
+            new StationState(broadcastStation);
+        }
+
+        if (newStation != null) {
+            broadcastStation = new StationState(newStation);
+        } else {
+            broadcastStation = null;
+        }
+
+        if (newStation == null) {
+            for (BroadcastStationUpdateListener listener : broadcastStationListeners) {
+                listener.OnBroadcastStationDie();
+            }
+        }
+        else if (prevStation == null) {
+            for (BroadcastStationUpdateListener listener : broadcastStationListeners) {
+                listener.OnBroadcastStationStart();
+            }
+            for (BroadcastStationUpdateListener listener : broadcastStationListeners) {
+                listener.OnBroadcastSongChange(broadcastStation);
+            }
+        }
+        else {
+            if (prevStation.IsDifferentSong(broadcastStation)) {
+                for (BroadcastStationUpdateListener listener : broadcastStationListeners) {
+                    listener.OnBroadcastSongChange(broadcastStation);
+                }
+            } else {
+                for (BroadcastStationUpdateListener listener : broadcastStationListeners) {
+                    listener.OnBroadcastSongUpdate(broadcastStation);
+                }
+            }
+        }
+
+    }
+
+
 }

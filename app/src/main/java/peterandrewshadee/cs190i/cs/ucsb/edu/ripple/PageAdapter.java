@@ -24,7 +24,7 @@ public class PageAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            return new MyStationFragment();
+            return new BroadcastParentFragment();
         }
         if (position == 1) {
             return new StationsListFragment();

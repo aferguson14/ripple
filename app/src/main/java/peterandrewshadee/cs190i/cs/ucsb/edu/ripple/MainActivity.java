@@ -1,6 +1,5 @@
 package peterandrewshadee.cs190i.cs.ucsb.edu.ripple;
 
-import android.app.ActionBar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,13 +7,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Toast;
 
-import java.util.HashSet;
-
-public class MainActivity extends AppCompatActivity implements StationState.CurrentStationUpdateListener {
+public class MainActivity extends AppCompatActivity implements StationState.ListeningStationUpdateListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +21,9 @@ public class MainActivity extends AppCompatActivity implements StationState.Curr
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.main_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        StationState.SubscribeToCurrentStationUpdates(this);
+        StationState.SubscribeToListeningStationUpdates(this);
 
-        OnStationDie(); // Music bar starts hidden
+        OnListeningStationDie(); // Music bar starts hidden
     }
 
 
@@ -37,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements StationState.Curr
     public void onDestroy() {
         super.onDestroy();
 
-        StationState.UnsubscribeFromCurrentStationUpdates(this);
+        StationState.UnsubscribeFromListeningStationUpdates(this);
     }
 
 
@@ -46,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements StationState.Curr
      */
 
     @Override
-    public void OnStationStart() {
+    public void OnListeningStationStart() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Fragment musicBarFragment = getSupportFragmentManager().findFragmentById(R.id.main_musicbar);
@@ -55,19 +49,19 @@ public class MainActivity extends AppCompatActivity implements StationState.Curr
     }
 
     @Override
-    public void OnSongChange(StationState stationState, boolean userWantsToPlay) {
+    public void OnListeningSongChange(StationState stationState) {
 
         // TODO: update the player
     }
 
     @Override
-    public void OnSongUpdate(StationState stationState, boolean userWantsToPlay) {
+    public void OnListeningSongUpdate(StationState stationState) {
 
         // TODO: update the player
     }
 
     @Override
-    public void OnStationDie() {
+    public void OnListeningStationDie() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Fragment musicBarFragment = getSupportFragmentManager().findFragmentById(R.id.main_musicbar);
