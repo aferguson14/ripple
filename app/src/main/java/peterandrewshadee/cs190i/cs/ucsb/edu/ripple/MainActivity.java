@@ -1,5 +1,7 @@
 package peterandrewshadee.cs190i.cs.ucsb.edu.ripple;
 
+import android.app.ActionBar;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -7,13 +9,24 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity implements StationState.ListeningStationUpdateListener {
+
+    private static final int REQUEST_CODE = 1337;
+    public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+        String accessToken = intent.getStringExtra(ACCESS_TOKEN);
+
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.main_viewpager);
         viewPager.setAdapter(new PageAdapter(getSupportFragmentManager(), MainActivity.this));
