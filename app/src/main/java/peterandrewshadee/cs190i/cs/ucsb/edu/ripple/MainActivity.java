@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         Intent intent = getIntent();
         String accessToken = intent.getStringExtra(ACCESS_TOKEN);
 
+        //Firebase
+        FirebaseHelper.Initialize();
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.main_viewpager);
         viewPager.setAdapter(new PageAdapter(getSupportFragmentManager(), MainActivity.this));

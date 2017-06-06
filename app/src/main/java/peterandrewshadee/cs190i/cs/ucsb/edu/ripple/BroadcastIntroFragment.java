@@ -22,13 +22,24 @@ public class BroadcastIntroFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_broadcastintro, container, false);
 
+
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (OpenSpotifyApp()) {
 
                     // TODO: start broadcasting
-
+//                    StationState.UpdateBroadcastStation(new StationState(
+//                            userId,
+//                            userName,
+//                            songId,
+//                            songTitle,
+//                            songArtist,
+//                            isPlaying,
+//                            songDuration,
+//                            songProgress,
+//                            new HashSet<String>()
+//                    ));
                     // TODO: remove this test code
                     // TEST CODE
                     StationState.UpdateBroadcastStation(new StationState(
