@@ -5,7 +5,7 @@ Maintains state of track you are listening to and / or tracks you are broadcasti
 To be updated about these, SubscribeToListeningStationUpdates & SubscribeToBroadcastStationUpdates
 To update the state of these, call UpdateListeningStation & UpdateBroadcastStation, passing in a StationState object
 For example:
-'''
+```java
 StationState.UpdateBroadcastStation(new StationState(
         null,                 // User ID (string)
         "Peter Werner",       // User Name (string)
@@ -17,7 +17,7 @@ StationState.UpdateBroadcastStation(new StationState(
         0,                    // Current position in the song in seconds (float)
         new HashSet<String>() // Set of User IDs listening to this broadcast
 ));
-'''
+```
 
 ### BroadcastIntroFragment
 When the user clicks on this, spotify app is opened. See TODO comments for where to update the DB and and example of how to update the currently broadcasting track within the app (so the UI can reflect this).
