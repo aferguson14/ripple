@@ -1,6 +1,5 @@
 package peterandrewshadee.cs190i.cs.ucsb.edu.ripple;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,17 +10,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
-
-import java.util.HashSet;
 
 import kaaes.spotify.webapi.android.models.UserPrivate;
 import retrofit.Callback;
@@ -33,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements StationState.List
     private static final int REQUEST_CODE = 1337;
     public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
     private static final String CLIENT_ID = "5aa6208c6cd54357ad6b55bd67197d51";
-    public static CurrentlyPlayingController currentlyPlayingController;
+    public static SpotifyApiController spotifyApiController;
     public static String myUserId;
     public static String myUserName;
     private Player mPlayer;
@@ -48,8 +42,8 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         String accessToken = intent.getStringExtra(ACCESS_TOKEN);
 
         //WebAPI
-        currentlyPlayingController = new CurrentlyPlayingController(accessToken);
-        MainActivity.currentlyPlayingController.getMeInfo(new Callback<UserPrivate>(){
+        spotifyApiController = new SpotifyApiController(accessToken);
+        MainActivity.spotifyApiController.getMeInfo(new Callback<UserPrivate>(){
             @Override
             public void success(UserPrivate userPrivate, Response response) {
                 if(userPrivate != null) {
