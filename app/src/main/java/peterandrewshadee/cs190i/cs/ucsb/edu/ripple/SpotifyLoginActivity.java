@@ -29,6 +29,7 @@ public class SpotifyLoginActivity extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String token = CredentialsHandler.getToken(this);
+
         if (token == null) {
             setContentView(R.layout.login_page);
         } else {

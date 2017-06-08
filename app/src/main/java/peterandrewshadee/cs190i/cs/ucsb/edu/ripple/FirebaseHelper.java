@@ -84,7 +84,7 @@ class FirebaseHelper {
     }
 
 
-    // broadcaster's spotify client userId -> list of listeners
+    // broadcaster's spotify client userId -> broadcast info (incl list of listeners)
 //    void addBroadcast(User broadcaster) {
 //        Broadcast bc = new Broadcast(broadcaster.getUserId());
 //        broadcasts.child(broadcaster.getUserId()).setValue(bc);
@@ -134,6 +134,23 @@ class FirebaseHelper {
         });
     }
 
+    void updateBroadcast(String broadcasterId, Broadcast broadcast) {
+        DatabaseReference dbr = broadcasts.child(broadcasterId);
+        dbr.child("artist").setValue(broadcast.getArtist());
+        dbr.child("duration_ms").setValue(broadcast.getDuration_ms());
+        dbr.child("is_playing").setValue(broadcast.getIs_playing());
+        dbr.child("progress_ms").setValue(broadcast.getProgress_ms());
+        dbr.child("songName").setValue(broadcast.getSongName());
+    }
+
+    void updateBroadcast(User broadcaster, Broadcast broadcast) {
+        DatabaseReference dbr = broadcasts.child(broadcaster.getUserId());
+        dbr.child("artist").setValue(broadcast.getArtist());
+        dbr.child("duration_ms").setValue(broadcast.getDuration_ms());
+        dbr.child("is_playing").setValue(broadcast.getIs_playing());
+        dbr.child("progress_ms").setValue(broadcast.getProgress_ms());
+        dbr.child("songName").setValue(broadcast.getSongName());
+    }
 
     void deleteBroadcast(User broadcaster) {
         broadcasts.child(broadcaster.getUserId()).removeValue();
