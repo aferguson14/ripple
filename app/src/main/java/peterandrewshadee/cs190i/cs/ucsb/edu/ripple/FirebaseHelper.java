@@ -96,7 +96,7 @@ class FirebaseHelper {
 //    }
 
     void addBroadcast(final String broadcasterId) {
-        MainActivity.currentlyPlayingController.fetchCurrentlyPlaying(new Callback<CurrentlyPlaying>(){
+        MainActivity.spotifyApiController.fetchCurrentlyPlaying(new Callback<CurrentlyPlaying>(){
             //CurrentlyPlaying attributes: timestamp, progress_ms, item (current track), is_playing
             @Override
             public void success(CurrentlyPlaying currentlyPlaying, Response response) {
@@ -173,7 +173,6 @@ class FirebaseHelper {
                         broadcastList.add(bc);
                     }
                     StationsListFragment.mBroadcastList = broadcastList;
-
                 }
             }
             @Override
