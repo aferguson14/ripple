@@ -28,24 +28,12 @@ public class CurrentlyPlayingController {
         mSpotifyService = api.getService();
     }
 
-    public void fetchCurrentlyPlaying(){
-        mSpotifyService.getCurrentTrack(new Callback<CurrentlyPlaying>(){
-            @Override
-            //CurrentlyPlaying attributes: timestamp, progress_ms, item (current track), is_playing
-            public void success(CurrentlyPlaying currentlyPlaying, Response response) {
-                if(currentlyPlaying != null) {
-                    updatedatabase();
-                }
-                else
-                    Log.d("restapi", "FAILURE");
-//                            Toast.makeText(MainActivity.this, track.uri, Toast.LENGTH_SHORT).show();
-            }
+    public void getMeInfo(Callback callback){
+        mSpotifyService.getMe(callback);
+    }
 
-            @Override
-            public void failure(RetrofitError error) {
-                Log.d("Track failure", error.toString());
-            }
-        });
+    public void fetchCurrentlyPlaying(Callback callback){
+        mSpotifyService.getCurrentTrack(callback);
     }
 
     private void updatedatabase(){

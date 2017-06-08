@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:gravity="center"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_accent">
+
+    <ImageView
+        android:src="@drawable/ic_broadcast"
+        android:layout_margin="16dp"
+        android:layout_height="50dp"
+        android:layout_width="50dp"/>
 
     <TextView
+        android:id="@+id/broadcaster_song_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="You are broadcasting"/>
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/broadcaster_song_artist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
 
 </LinearLayout>

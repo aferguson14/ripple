@@ -8,7 +8,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import kaaes.spotify.webapi.android.models.CurrentlyPlaying;
+import kaaes.spotify.webapi.android.models.UserPrivate;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by shadeebarzin on 6/2/17.
@@ -78,15 +85,55 @@ class FirebaseHelper {
 
 
     // broadcaster's spotify client userId -> list of listeners
-    void addBroadcast(User broadcaster) {
-        Broadcast bc = new Broadcast(broadcaster.getUserId());
-        broadcasts.child(broadcaster.getUserId()).setValue(bc);
+//    void addBroadcast(User broadcaster) {
+//        Broadcast bc = new Broadcast(broadcaster.getUserId());
+//        broadcasts.child(broadcaster.getUserId()).setValue(bc);
+//    }
+
+//    void addBroadcast(String broadcasterId) {
+//        Broadcast bc = new Broadcast(broadcasterId);
+//        broadcasts.child(broadcasterId).setValue(bc);
+//    }
+
+    void addBroadcast(final String broadcasterId) {
+        MainActivity.currentlyPlayingController.fetchCurrentlyPlaying(new Callback<CurrentlyPlaying>(){
+            //CurrentlyPlaying attributes: timestamp, progress_ms, item (current track), is_playing
+            @Override
+            public void success(CurrentlyPlaying currentlyPlaying, Response response) {
+                if(currentlyPlaying != null) {
+                    StationState.UpdateBroadcastStation(new StationState(
+                            MainActivity.myUserId,
+                            MainActivity.myUserName,
+                            currentlyPlaying.item.id,
+                            currentlyPlaying.item.name,
+                            currentlyPlaying.item.artists.get(0).name, //TODO: add all artists
+                            currentlyPlaying.is_playing,
+                            currentlyPlaying.item.duration_ms,
+                            currentlyPlaying.progress_ms,
+                            new ArrayList<String>()
+                    ));
+                    Broadcast bc = new Broadcast(broadcasterId);
+                    bc.setUserName(MainActivity.myUserName);
+                    bc.setSongId(currentlyPlaying.item.id);
+                    bc.setSongName(currentlyPlaying.item.name);
+                    bc.setArtist(currentlyPlaying.item.artists.get(0).name);
+                    bc.setIs_playing(currentlyPlaying.is_playing);
+                    bc.setDuration_ms(currentlyPlaying.item.duration_ms);
+                    bc.setProgress_ms(currentlyPlaying.progress_ms);
+                    broadcasts.child(broadcasterId).setValue(bc);
+                }
+                else
+                    Log.d("restapi", "FAILURE");
+//                            Toast.makeText(MainActivity.this, track.uri, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("Track failure", error.toString());
+            }
+        });
     }
 
-    void addBroadcast(String broadcasterId) {
-        Broadcast bc = new Broadcast(broadcasterId);
-        broadcasts.child(broadcasterId).setValue(bc);
-    }
 
     void deleteBroadcast(User broadcaster) {
         broadcasts.child(broadcaster.getUserId()).removeValue();
@@ -96,7 +143,9 @@ class FirebaseHelper {
         broadcasts.child(broadcasterId).removeValue();
     }
 
-    void getBroadcasts(final List<Broadcast> broadcastList) {
+    void getBroadcasts() {
+        final List<Broadcast> broadcastList = new ArrayList<>();
+
         broadcasts.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -106,9 +155,10 @@ class FirebaseHelper {
                         Log.d("getBroadcasts", bc.toString());
                         broadcastList.add(bc);
                     }
+                    StationsListFragment.mBroadcastList = broadcastList;
+
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.d("getBroadcasts", "db error: " + databaseError.getMessage());

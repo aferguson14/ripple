@@ -3,12 +3,20 @@ package peterandrewshadee.cs190i.cs.ucsb.edu.ripple;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.HashSet;
+
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.CurrentlyPlaying;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by peterwerner on 6/1/17.
@@ -27,32 +35,7 @@ public class BroadcastIntroFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (OpenSpotifyApp()) {
-
-                    // TODO: start broadcasting
-//                    StationState.UpdateBroadcastStation(new StationState(
-//                            userId,
-//                            userName,
-//                            songId,
-//                            songTitle,
-//                            songArtist,
-//                            isPlaying,
-//                            songDuration,
-//                            songProgress,
-//                            new HashSet<String>()
-//                    ));
-                    // TODO: remove this test code
-                    // TEST CODE
-                    StationState.UpdateBroadcastStation(new StationState(
-                            null,
-                            "Peter Werner",
-                            null,
-                            "Piledriver Waltz",
-                            "Alex Turner",
-                            true,
-                            30,
-                            0,
-                            new HashSet<String>()
-                    ));
+                    FirebaseHelper.GetInstance().addBroadcast(MainActivity.myUserId);
 
                 } else {
                     Toast.makeText(v.getContext(), "You must have the Spotify app installed.", Toast.LENGTH_SHORT).show();

@@ -12,26 +12,26 @@ import java.util.Set;
 public class StationState {
     String userId, userName=""; // Spotify user broadcasting
     String songId, songTitle="", songArtist=""; // Song currently playing
-    boolean isPlaying =false;
-    double songDurationSeconds=0, songProgressSeconds=0; // Total length and current position of song
-    Set<String> listenerIds = new HashSet<>();
+    boolean isPlaying = false;
+    long songDurationMs=0, songProgressMs=0; // Total length and current position of song
+    List<String> listenerIds = new ArrayList<>();
 
-    public StationState(String userId, String songId) {
-        this.userId = userId;
-        this.songId = songId;
+//    public StationState(String userId, String songId) {
+//        this.userId = userId;
+//        this.songId = songId;
+//
+//        // TODO need to fetch the song title / username etc? web API? store in DB?
+//    }
 
-        // TODO need to fetch the song title / username etc? web API? store in DB?
-    }
-
-    public StationState(String userId, String userName, String songId, String songTitle, String songArtist, boolean isPaused, double songDurationSeconds, double songProgressSeconds, Set<String> listenerIds) {
+    public StationState(String userId, String userName, String songId, String songTitle, String songArtist, boolean isPlaying, long songDurationMs, long songProgressMs, List<String> listenerIds) {
         this.userId = userId;
         this.userName = userName;
         this.songId = songId;
         this.songTitle = songTitle;
         this.songArtist = songArtist;
-        this.isPlaying = isPaused;
-        this.songDurationSeconds = songDurationSeconds;
-        this.songProgressSeconds = songProgressSeconds;
+        this.isPlaying = isPlaying;
+        this.songDurationMs = songDurationMs;
+        this.songProgressMs = songProgressMs;
         this.listenerIds = listenerIds;
     }
 
@@ -42,8 +42,8 @@ public class StationState {
         this.songTitle = _stationState.songTitle;
         this.songArtist = _stationState.songArtist;
         this.isPlaying = _stationState.isPlaying;
-        this.songDurationSeconds = _stationState.songDurationSeconds;
-        this.songProgressSeconds = _stationState.songProgressSeconds;
+        this.songDurationMs = _stationState.songDurationMs;
+        this.songProgressMs = _stationState.songProgressMs;
         this.listenerIds = _stationState.listenerIds;
     }
 

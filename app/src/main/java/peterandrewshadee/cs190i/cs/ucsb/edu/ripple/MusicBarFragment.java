@@ -65,7 +65,7 @@ public class MusicBarFragment extends Fragment implements StationState.Listening
                 if (timeLastUpdated != null) {
                     long deltaTime = currTime - timeLastUpdated;
                     if (StationState.listeningStation != null && StationState.listeningStation.isPlaying) {
-                        StationState.listeningStation.songProgressSeconds += 0.001f * deltaTime;
+                        StationState.listeningStation.songProgressMs += 0.001f * deltaTime;
                     }
                     UpdateProgressBarFromOtherThread();
                 }
@@ -115,7 +115,7 @@ public class MusicBarFragment extends Fragment implements StationState.Listening
     private void UpdateProgressBar () {
         LinearLayout.LayoutParams progressBarParams = (LinearLayout.LayoutParams) progressBar.getLayoutParams();
         progressBarParams.weight = StationState.listeningStation != null
-                ? (float) (StationState.listeningStation.songProgressSeconds / StationState.listeningStation.songDurationSeconds)
+                ? (float) (StationState.listeningStation.songProgressMs / StationState.listeningStation.songDurationMs)
                 : 0;
         progressBar.setLayoutParams(progressBarParams);
     }
