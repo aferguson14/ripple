@@ -12,18 +12,45 @@ import android.widget.Toast;
  * Created by peterwerner on 6/5/17.
  */
 
-public class BroadcastFragment extends Fragment {
+public class BroadcastFragment extends Fragment implements StationState.BroadcastStationUpdateListener {
+
+    TextView textSong, textArtist, textCaption;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_broadcast, container, false);
 
-        TextView songTitleView = (TextView) view.findViewById(R.id.broadcaster_song_title);
-        TextView songArtistView = (TextView) view.findViewById(R.id.broadcaster_song_artist);
+        textSong = (TextView) view.findViewById(R.id.broadcaster_song_title);
+        textArtist = (TextView) view.findViewById(R.id.broadcaster_song_artist);
+        textCaption = (TextView) view.findViewById(R.id.broadcaster_text_caption);
 
-        songTitleView.setText(StationState.broadcastStation.songTitle);
-        songArtistView.setText(StationState.broadcastStation.songArtist);
-        // Toast.makeText(getContext(), StationState.broadcastStation.songTitle, Toast.LENGTH_SHORT).show();
+        view.findViewById(R.id.broadcaster_button_stop).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StationState.TryClearBroadcastStationWithConfirmationDialog(getContext());
+            }
+        });
+
+        if (StationState.broadcastStation != null) {
+            OnBroadcastSongUpdate(StationState.broadcastStation);
+        }
+
         return view;
     }
+
+    @Override
+    public void OnBroadcastStationStart() {}
+
+    @Override
+    public void OnBroadcastSongChange(StationState stationState) {}
+
+    @Override
+    public void OnBroadcastSongUpdate(StationState stationState) {
+        textSong.setText(stationState.songTitle);
+        textArtist.setText(stationState.songArtist);
+        textCaption.setText("Broadcasting to " + stationState.listenerIds.size() + " listeners");
+    }
+
+    @Override
+    public void OnBroadcastStationDie() {}
 }
