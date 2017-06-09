@@ -28,10 +28,13 @@ class FirebaseHelper {
     private DatabaseReference broadcasts;
     private DatabaseReference listeners;
 
+    static final List<Broadcast> broadcastList = new ArrayList<>();
+
 
     // call this method on successful login
     static void Initialize() {
         if (firebase == null) firebase = new FirebaseHelper();
+        firebase.getBroadcasts();
     }
 
     // use this method when want to add or read from db in any Activity/Fragment/etc.
@@ -108,8 +111,8 @@ class FirebaseHelper {
                             currentlyPlaying.item.name,
                             currentlyPlaying.item.artists.get(0).name, //TODO: add all artists
                             currentlyPlaying.is_playing,
-                            currentlyPlaying.item.duration_ms,
-                            currentlyPlaying.progress_ms,
+                            (long)(currentlyPlaying.item.duration_ms),
+                            (long)(currentlyPlaying.progress_ms),
                             new ArrayList<String>()
                     ));
                     Broadcast bc = new Broadcast(broadcasterId);
@@ -119,7 +122,7 @@ class FirebaseHelper {
                     bc.setArtist(currentlyPlaying.item.artists.get(0).name);
                     bc.setIs_playing(currentlyPlaying.is_playing);
                     bc.setDuration_ms(currentlyPlaying.item.duration_ms);
-                    bc.setProgress_ms(currentlyPlaying.progress_ms);
+                    bc.setProgress_ms((long)(currentlyPlaying.progress_ms));
                     broadcasts.child(broadcasterId).setValue(bc);
                 }
                 else
@@ -161,7 +164,6 @@ class FirebaseHelper {
     }
 
     void getBroadcasts() {
-        final List<Broadcast> broadcastList = new ArrayList<>();
 
         broadcasts.addValueEventListener(new ValueEventListener() {
             @Override
@@ -172,7 +174,6 @@ class FirebaseHelper {
                         Log.d("getBroadcasts", bc.toString());
                         broadcastList.add(bc);
                     }
-                    StationsListFragment.mBroadcastList = broadcastList;
                 }
             }
             @Override

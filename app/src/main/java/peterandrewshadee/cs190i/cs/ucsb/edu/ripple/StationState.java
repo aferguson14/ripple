@@ -17,7 +17,7 @@ public class StationState {
     String userId, userName=""; // Spotify user broadcasting
     String songId, songTitle="", songArtist=""; // Song currently playing
     boolean isPlaying = false;
-    long songDurationMs=0, songProgressMs=0; // Total length and current position of song
+    long songDurationMs, songProgressMs; // Total length and current position of song
     List<String> listenerIds = new ArrayList<>();
 
 //    public StationState(String userId, String songId) {
@@ -27,7 +27,7 @@ public class StationState {
 //        // TODO need to fetch the song title / username etc? web API? store in DB?
 //    }
 
-    public StationState(String userId, String userName, String songId, String songTitle, String songArtist, boolean isPlaying, long songDurationMs, long songProgressMs, List<String> listenerIds) {
+    public StationState(String userId, String userName, String songId, String songTitle, String songArtist, Boolean isPlaying, Long songDurationMs, Long songProgressMs, List<String> listenerIds) {
         this.userId = userId;
         this.userName = userName;
         this.songId = songId;
@@ -51,8 +51,28 @@ public class StationState {
         this.listenerIds = _stationState.listenerIds;
     }
 
+    public StationState(Broadcast broadcast) {
+        this.userId = broadcast.getId();
+        this.userName = broadcast.getUserName();
+        this.songId = broadcast.getSongId();
+        this.songTitle = broadcast.getSongName();
+        this.songArtist = broadcast.getArtist();
+        this.isPlaying = broadcast.getIs_playing() != null && broadcast.getIs_playing().booleanValue();
+        this.songDurationMs = broadcast.getDuration_ms() != null ? broadcast.getDuration_ms() : 0;
+        this.songProgressMs = broadcast.getProgress_ms() != null ? broadcast.getProgress_ms() : 0;
+        this.listenerIds = broadcast.getListeners();
+    }
+
     boolean IsDifferentSong(StationState _stationState) {
         return this.userId != _stationState.userId || this.songId != _stationState.songId;
+    }
+
+    float GetNormalizedPosition () {
+        if (songDurationMs <= 0) {
+            return 0;
+        } else {
+            return songProgressMs / songDurationMs;
+        }
     }
 
 

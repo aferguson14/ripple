@@ -17,7 +17,7 @@ public class Broadcast {
     private String artist;
     private Boolean is_playing;
     private Long duration_ms;
-    private int progress_ms;
+    private Long progress_ms;
     private List<String> listeners;
 
     public Broadcast() {} //was private
@@ -90,10 +90,10 @@ public class Broadcast {
         this.duration_ms = duration_ms;
     }
 
-    public int getProgress_ms() {
+    public Long getProgress_ms() {
         return progress_ms;
     }
-    public void setProgress_ms(int progress_ms) {
+    public void setProgress_ms(Long progress_ms) {
         this.progress_ms = progress_ms;
     }
     public List<String> getListeners() {
