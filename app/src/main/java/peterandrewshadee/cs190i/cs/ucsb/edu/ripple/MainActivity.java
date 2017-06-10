@@ -24,8 +24,10 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import kaaes.spotify.webapi.android.models.CurrentlyPlaying;
 import kaaes.spotify.webapi.android.models.UserPrivate;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -102,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements StationState.List
 
         //Firebase
         FirebaseHelper.Initialize();
+        FirebaseHelper.GetInstance().getBroadcasts();
 
 
         /*
@@ -113,9 +116,8 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         mSessionCallback = new MediaController.Callback() {
             @Override
             public void onPlaybackStateChanged(PlaybackState state) {
-                Log.d("NotificationListener", "inside playbackchanged");
+                Log.d("NotificationListener", "playback changed");
                 if (state != null) {
-                    //PLAYBACKSTATE POSITION ON CHANGE
                     if(isBroadcasting) {
                         Broadcast bc = new Broadcast(myUserId);
                         bc.setProgress_ms(state.getPosition());
@@ -134,14 +136,41 @@ public class MainActivity extends AppCompatActivity implements StationState.List
                 Log.d("NotificationListener", "metadata changed");
                 if (metadata != null) {
                     if(isBroadcasting) {
-                        Broadcast bc = new Broadcast(myUserId);
+                        final Broadcast bc = new Broadcast(myUserId);
                         bc.setArtist(metadata.getString(METADATA_KEY_ARTIST));
                         bc.setDuration_ms(metadata.getLong(METADATA_KEY_DURATION));
                         bc.setSongName(metadata.getString(METADATA_KEY_TITLE));
-                        FirebaseHelper.GetInstance().updateBroadcastMetadata(myUserId, bc);
-                        Log.d("NotificationListener", "metadata not null");
+                        MainActivity.spotifyApiController.fetchCurrentlyPlaying(new Callback<CurrentlyPlaying>(){
+                            //CurrentlyPlaying attributes: timestamp, progress_ms, item (current track), is_playing
+                            @Override
+                            public void success(CurrentlyPlaying currentlyPlaying, Response response) {
+                                if(currentlyPlaying != null) {
+                                    bc.setSongId(currentlyPlaying.item.id);
+                                    Log.d("NotificationListener", "songid: " + currentlyPlaying.item.id);
+                                    FirebaseHelper.GetInstance().updateBroadcastMetadata(myUserId, bc);
+                                }
+                                else
+                                    Log.d("restapi", "FAILURE");
+//                            Toast.makeText(MainActivity.this, track.uri, Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+                                Log.d("Track failure", error.toString());
+                            }
+                        });
+
+                        for(String key : metadata.keySet()){
+                            Log.d("NotificationListener", "key: " + key);
+
+                        }
                     }
                 }
+            }
+
+            @Override
+            public void onExtrasChanged(Bundle extras){
+                Log.d("NotificationListener", "" + extras.size());
             }
 
             @Override
@@ -215,9 +244,14 @@ public class MainActivity extends AppCompatActivity implements StationState.List
     @Override
     public void OnListeningSongUpdate(StationState stationState) {
         //TODO: test
-        mPlayer.play("spotify:track:" + stationState.songId);
-        int songProgressSeconds = (int)Math.round(stationState.songProgressMs*.001);
-        mPlayer.seekToPosition(songProgressSeconds);
+        if(stationState.isPlaying) {
+            mPlayer.play("spotify:track:" + stationState.songId);
+            int songProgressSeconds = (int) Math.round(stationState.songProgressMs * .001);
+            mPlayer.seekToPosition(songProgressSeconds);
+        }
+        else if(!stationState.isPlaying){
+            mPlayer.pause();
+        }
     }
 
     @Override

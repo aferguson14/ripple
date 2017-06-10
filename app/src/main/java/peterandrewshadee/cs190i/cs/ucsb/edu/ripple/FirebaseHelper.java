@@ -170,6 +170,7 @@ class FirebaseHelper {
         dbr.child("duration_ms").setValue(broadcast.getDuration_ms());
         dbr.child("is_playing").setValue(broadcast.getIs_playing());
         dbr.child("songName").setValue(broadcast.getSongName());
+        dbr.child("songId").setValue(broadcast.getSongId());
     }
 
     void updateBroadcastPlayState(String broadcasterId, Broadcast broadcast){
@@ -196,6 +197,7 @@ class FirebaseHelper {
                         Broadcast bc = ds.getValue(Broadcast.class);
                         Log.d("getBroadcasts", bc.toString());
                         broadcastList.add(bc);
+                        Log.d("stationslist", "broadcast update");
                     }
                 }
             }

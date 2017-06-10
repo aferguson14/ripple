@@ -58,7 +58,7 @@ public class Broadcast {
     public String getSongId() {
         return songId;
     }
-    public void setSongId(String id) {
+    public void setSongId(String songId) {
         this.songId = songId;
     }
 
