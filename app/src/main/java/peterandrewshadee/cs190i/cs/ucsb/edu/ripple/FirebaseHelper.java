@@ -1,5 +1,12 @@
 package peterandrewshadee.cs190i.cs.ucsb.edu.ripple;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.media.MediaMetadata;
+import android.media.session.MediaController;
+import android.media.session.MediaSessionManager;
+import android.media.session.PlaybackState;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -16,6 +23,8 @@ import kaaes.spotify.webapi.android.models.UserPrivate;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+import static android.media.MediaMetadata.METADATA_KEY_ALBUM;
 
 /**
  * Created by shadeebarzin on 6/2/17.
@@ -155,6 +164,20 @@ class FirebaseHelper {
         dbr.child("songName").setValue(broadcast.getSongName());
     }
 
+    void updateBroadcastMetadata(String broadcasterId, Broadcast broadcast) {
+        DatabaseReference dbr = broadcasts.child(broadcasterId);
+        dbr.child("artist").setValue(broadcast.getArtist());
+        dbr.child("duration_ms").setValue(broadcast.getDuration_ms());
+        dbr.child("is_playing").setValue(broadcast.getIs_playing());
+        dbr.child("songName").setValue(broadcast.getSongName());
+    }
+
+    void updateBroadcastPlayState(String broadcasterId, Broadcast broadcast){
+        DatabaseReference dbr = broadcasts.child(broadcasterId);
+        dbr.child("progress_ms").setValue(broadcast.getProgress_ms());
+        dbr.child("is_playing").setValue(broadcast.getIs_playing());
+    }
+
     void deleteBroadcast(User broadcaster) {
         broadcasts.child(broadcaster.getUserId()).removeValue();
     }
@@ -200,5 +223,6 @@ class FirebaseHelper {
     void deleteListener(String listenerId, String broadcasterId) {
         broadcasts.child(broadcasterId).child("listeners").child(listenerId).removeValue();
     }
+
 
 }

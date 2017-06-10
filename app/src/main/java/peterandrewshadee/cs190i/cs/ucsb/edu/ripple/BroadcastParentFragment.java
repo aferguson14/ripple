@@ -35,6 +35,9 @@ public class BroadcastParentFragment extends Fragment implements StationState.Br
     @Override
     public void OnBroadcastStationStart() {
         SetFragment(new BroadcastFragment());
+
+
+
     }
 
     @Override

@@ -1,7 +1,14 @@
 package peterandrewshadee.cs190i.cs.ucsb.edu.ripple;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.media.MediaMetadata;
+import android.media.session.MediaController;
+import android.media.session.MediaSessionManager;
+import android.media.session.PlaybackState;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.HashSet;
+import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -17,6 +25,8 @@ import kaaes.spotify.webapi.android.models.CurrentlyPlaying;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+import static android.media.MediaMetadata.METADATA_KEY_ALBUM;
 
 /**
  * Created by peterwerner on 6/1/17.
@@ -36,7 +46,7 @@ public class BroadcastIntroFragment extends Fragment {
             public void onClick(View v) {
                 if (OpenSpotifyApp()) {
                     FirebaseHelper.GetInstance().addBroadcast(MainActivity.myUserId);
-
+                    MainActivity.isBroadcasting = true;
                 } else {
                     Toast.makeText(v.getContext(), "You must have the Spotify app installed.", Toast.LENGTH_SHORT).show();
                 }

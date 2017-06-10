@@ -1,6 +1,13 @@
 package peterandrewshadee.cs190i.cs.ucsb.edu.ripple;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.media.MediaMetadata;
+import android.media.session.MediaController;
+import android.media.session.MediaSessionManager;
+import android.media.session.PlaybackState;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,12 +24,20 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
+import java.util.List;
+
 import kaaes.spotify.webapi.android.models.UserPrivate;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class MainActivity extends AppCompatActivity implements StationState.ListeningStationUpdateListener, PlayerNotificationCallback, ConnectionStateCallback {
+import static android.media.MediaMetadata.METADATA_KEY_ALBUM;
+import static android.media.MediaMetadata.METADATA_KEY_ARTIST;
+import static android.media.MediaMetadata.METADATA_KEY_DURATION;
+import static android.media.MediaMetadata.METADATA_KEY_TITLE;
+import static android.media.session.PlaybackState.STATE_PAUSED;
+
+public class MainActivity extends AppCompatActivity implements StationState.ListeningStationUpdateListener, PlayerNotificationCallback, ConnectionStateCallback{
 
     private static final int REQUEST_CODE = 1337;
     public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
@@ -30,7 +45,13 @@ public class MainActivity extends AppCompatActivity implements StationState.List
     public static SpotifyApiController spotifyApiController;
     public static String myUserId;
     public static String myUserName;
+
     private Player mPlayer;
+
+    public static Boolean isBroadcasting;
+
+    public MediaController.Callback mSessionCallback;
+    public MediaController spotifyMediaController;
 
 
     @Override
@@ -82,6 +103,71 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         //Firebase
         FirebaseHelper.Initialize();
 
+
+        /*
+            MEDIA CONTROLLER
+         */
+        isBroadcasting = false;
+        MediaSessionManager mm = (MediaSessionManager) this.getSystemService(
+                Context.MEDIA_SESSION_SERVICE);
+        mSessionCallback = new MediaController.Callback() {
+            @Override
+            public void onPlaybackStateChanged(PlaybackState state) {
+                Log.d("NotificationListener", "inside playbackchanged");
+                if (state != null) {
+                    //PLAYBACKSTATE POSITION ON CHANGE
+                    if(isBroadcasting) {
+                        Broadcast bc = new Broadcast(myUserId);
+                        bc.setProgress_ms(state.getPosition());
+                        if(state.getState()==PlaybackState.STATE_PAUSED)
+                            bc.setIs_playing(false);
+                        else if(state.getState()==PlaybackState.STATE_PLAYING)
+                            bc.setIs_playing(true);
+                        FirebaseHelper.GetInstance().updateBroadcastPlayState(myUserId, bc);
+                        Log.d("NotificationListener", "STATEPOS: " + state.getPosition());
+                    }
+                }
+            }
+
+            @Override
+            public void onMetadataChanged(MediaMetadata metadata) {
+                Log.d("NotificationListener", "metadata changed");
+                if (metadata != null) {
+                    if(isBroadcasting) {
+                        Broadcast bc = new Broadcast(myUserId);
+                        bc.setArtist(metadata.getString(METADATA_KEY_ARTIST));
+                        bc.setDuration_ms(metadata.getLong(METADATA_KEY_DURATION));
+                        bc.setSongName(metadata.getString(METADATA_KEY_TITLE));
+                        FirebaseHelper.GetInstance().updateBroadcastMetadata(myUserId, bc);
+                        Log.d("NotificationListener", "metadata not null");
+                    }
+                }
+            }
+
+            @Override
+            public void onSessionDestroyed() {
+                Log.d("NotificationListener", "SESSION DESTROYED");
+            }
+        };
+
+        mm.addOnActiveSessionsChangedListener(new MediaSessionManager.OnActiveSessionsChangedListener() {
+                                                  @Override
+                                                  public void onActiveSessionsChanged(@Nullable List<MediaController> controllers) {
+                                                      for (int i = 0; i < controllers.size(); i++) {
+                                                          Log.d("NotificationListener", "controller: " + i + " " + controllers.get(i).getPackageName());
+                                                          if (controllers.get(i).getPackageName().equals("com.spotify.music")) {
+                                                              spotifyMediaController = controllers.get(i);
+                                                              spotifyMediaController.registerCallback(mSessionCallback);
+                                                          }
+                                                      }
+                                                  }
+                                              },
+                new ComponentName(getApplicationContext().getPackageName(), NotificationListener.class.getName()));
+        /*
+            MEDIA CONTROLLER
+         */
+
+
         final ViewPager viewPager = (ViewPager) findViewById(R.id.main_viewpager);
         viewPager.setAdapter(new PageAdapter(getSupportFragmentManager(), MainActivity.this));
         viewPager.setCurrentItem(1); // Default to second page (Listen)
@@ -113,6 +199,11 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         Fragment musicBarFragment = getSupportFragmentManager().findFragmentById(R.id.main_musicbar);
         fragmentTransaction.show(musicBarFragment);
         fragmentTransaction.commit();
+
+        if(isBroadcasting) {
+            FirebaseHelper.GetInstance().deleteBroadcast(myUserId);
+            isBroadcasting = false;
+        }
     }
 
     @Override
@@ -191,5 +282,6 @@ public class MainActivity extends AppCompatActivity implements StationState.List
     public void onConnectionMessage(String message) {
         Log.d("MainActivity", "Received connection message: " + message);
     }
+
 
 }
