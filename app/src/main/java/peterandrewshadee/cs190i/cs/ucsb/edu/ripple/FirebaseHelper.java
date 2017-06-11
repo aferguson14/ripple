@@ -38,6 +38,7 @@ class FirebaseHelper {
     private DatabaseReference listeners;
 
     static final List<Broadcast> broadcastList = new ArrayList<>();
+    static long timeAtUpdate;
 
 
     // call this method on successful login
@@ -114,6 +115,10 @@ class FirebaseHelper {
                             (long)(currentlyPlaying.progress_ms),
                             new ArrayList<String>()
                     ));
+
+                    //TODO: need to update DB when listener joins
+                    List<String> listenerList = new ArrayList<String>();
+                    listenerList.add("");
                     Broadcast bc = new Broadcast(broadcasterId);
                     bc.setUserName(MainActivity.myUserName);
                     bc.setSongId(currentlyPlaying.item.id);
@@ -122,6 +127,7 @@ class FirebaseHelper {
                     bc.setIs_playing(currentlyPlaying.is_playing);
                     bc.setDuration_ms(currentlyPlaying.item.duration_ms);
                     bc.setProgress_ms((long)(currentlyPlaying.progress_ms));
+                    bc.setListeners(listenerList);
                     broadcasts.child(broadcasterId).setValue(bc);
                 }
                 else
@@ -158,7 +164,7 @@ class FirebaseHelper {
         DatabaseReference dbr = broadcasts.child(broadcasterId);
         dbr.child("artist").setValue(broadcast.getArtist());
         dbr.child("duration_ms").setValue(broadcast.getDuration_ms());
-        dbr.child("is_playing").setValue(broadcast.getIs_playing());
+//        dbr.child("is_playing").setValue(broadcast.getIs_playing());
         dbr.child("songName").setValue(broadcast.getSongName());
         dbr.child("songId").setValue(broadcast.getSongId());
     }
@@ -167,6 +173,7 @@ class FirebaseHelper {
         DatabaseReference dbr = broadcasts.child(broadcasterId);
         dbr.child("progress_ms").setValue(broadcast.getProgress_ms());
         dbr.child("is_playing").setValue(broadcast.getIs_playing());
+        timeAtUpdate = System.currentTimeMillis();
     }
 
     void deleteBroadcast(User broadcaster) {

@@ -19,6 +19,7 @@ import android.util.Log;
 
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.PlayConfig;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
@@ -26,6 +27,7 @@ import com.spotify.sdk.android.player.Spotify;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import kaaes.spotify.webapi.android.models.CurrentlyPlaying;
 import kaaes.spotify.webapi.android.models.UserPrivate;
@@ -230,28 +232,51 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         fragmentTransaction.commit();
 
         if(isBroadcasting) {
-            FirebaseHelper.GetInstance().deleteBroadcast(myUserId);
-            isBroadcasting = false;
+//            FirebaseHelper.GetInstance().deleteBroadcast(myUserId);
+//            isBroadcasting = false;
         }
     }
 
     @Override
     public void OnListeningSongChange(StationState stationState) {
         //TODO: test
-        mPlayer.play("spotify:track:" + stationState.songId);
+        Log.d("listeners", "onListeningSongCHANGE");
+        if(stationState.isPlaying && stationState.userWantsToPlay) {
+            int songProgressMilli = (int) (stationState.songProgressMs + ((FirebaseHelper.GetInstance().timeAtUpdate == 0 ) ? 0 : System.currentTimeMillis() - FirebaseHelper.GetInstance().timeAtUpdate));
+            mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressMilli));
+            Log.d("listeners", "songProgress " + songProgressMilli);
+        }
+        else{
+            Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
+            mPlayer.pause();
+        }
     }
 
     @Override
     public void OnListeningSongUpdate(StationState stationState) {
         //TODO: test
-        if(stationState.isPlaying) {
-            mPlayer.play("spotify:track:" + stationState.songId);
-            int songProgressSeconds = (int) Math.round(stationState.songProgressMs * .001);
-            mPlayer.seekToPosition(songProgressSeconds);
+        Log.d("listeners", "onListeningSongUPDATE");
+        if(stationState.isPlaying && stationState.userWantsToPlay) {
+            int songProgressMilli = (int) (stationState.songProgressMs + ((FirebaseHelper.GetInstance().timeAtUpdate == 0 ) ? 0 : System.currentTimeMillis() - FirebaseHelper.GetInstance().timeAtUpdate));
+            mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressMilli));
+            Log.d("listeners", "songProgress " + songProgressMilli);
+
         }
-        else if(!stationState.isPlaying){
+        else{
+            Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
             mPlayer.pause();
         }
+//        if(stationState.isPlaying && stationState.userWantsToPlay) {
+//            mPlayer.play("spotify:track:" + stationState.songId);
+//
+//            int songProgressSeconds = (int) (stationState.songProgressMs + ((FirebaseHelper.GetInstance().timeAtUpdate == 0 ) ? 0 : System.currentTimeMillis() - FirebaseHelper.GetInstance().timeAtUpdate));
+//
+//            Log.d("listeners", "songProgress " + songProgressSeconds);
+//            mPlayer.seekToPosition(songProgressSeconds);
+//        }
+//        else{
+//            mPlayer.pause();
+//        }
     }
 
     @Override
