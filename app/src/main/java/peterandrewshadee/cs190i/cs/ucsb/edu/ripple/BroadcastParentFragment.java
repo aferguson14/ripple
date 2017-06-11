@@ -52,10 +52,14 @@ public class BroadcastParentFragment extends Fragment implements StationState.Br
     }
 
     private void SetFragment (Fragment fragment) {
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.broadcast_container, fragment)
-                .commit();
+        try {
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.broadcast_container, fragment)
+                    .commitAllowingStateLoss();
+        } catch (IllegalStateException e) {
+            Toast.makeText(getContext(), "Error: failed to update fragment", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

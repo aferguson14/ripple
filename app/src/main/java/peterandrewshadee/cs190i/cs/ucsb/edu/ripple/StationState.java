@@ -60,7 +60,9 @@ public class StationState {
         this.isPlaying = broadcast.getIs_playing() != null && broadcast.getIs_playing().booleanValue();
         this.songDurationMs = broadcast.getDuration_ms() != null ? broadcast.getDuration_ms() : 0;
         this.songProgressMs = broadcast.getProgress_ms() != null ? broadcast.getProgress_ms() : 0;
-        this.listenerIds = broadcast.getListeners();
+        if (broadcast.getListeners() != null) {
+            this.listenerIds = broadcast.getListeners();
+        }
     }
 
     boolean IsDifferentSong(StationState _stationState) {

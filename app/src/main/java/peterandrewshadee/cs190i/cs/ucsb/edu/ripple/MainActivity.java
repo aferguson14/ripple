@@ -16,6 +16,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
@@ -207,9 +208,13 @@ public class MainActivity extends AppCompatActivity implements StationState.List
 
         StationState.SubscribeToListeningStationUpdates(this);
 
-        OnListeningStationDie(); // Music bar starts hidden
     }
 
+    @Override
+    public void onPostResume() {
+        super.onPostResume();
+        OnListeningStationDie(); // Music bar starts hidden
+    }
 
     @Override
     public void onDestroy() {
@@ -225,11 +230,15 @@ public class MainActivity extends AppCompatActivity implements StationState.List
 
     @Override
     public void OnListeningStationStart() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment musicBarFragment = getSupportFragmentManager().findFragmentById(R.id.main_musicbar);
-        fragmentTransaction.show(musicBarFragment);
-        fragmentTransaction.commit();
+        try {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            Fragment musicBarFragment = getSupportFragmentManager().findFragmentById(R.id.main_musicbar);
+            fragmentTransaction.show(musicBarFragment);
+            fragmentTransaction.commitAllowingStateLoss();
+        } catch (IllegalStateException e) {
+            Toast.makeText(this, "Error: failed to update fragment", Toast.LENGTH_SHORT).show();
+        }
 
         if(isBroadcasting) {
 //            FirebaseHelper.GetInstance().deleteBroadcast(myUserId);
@@ -281,11 +290,15 @@ public class MainActivity extends AppCompatActivity implements StationState.List
 
     @Override
     public void OnListeningStationDie() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment musicBarFragment = getSupportFragmentManager().findFragmentById(R.id.main_musicbar);
-        fragmentTransaction.hide(musicBarFragment);
-        fragmentTransaction.commit();
+        try {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            Fragment musicBarFragment = getSupportFragmentManager().findFragmentById(R.id.main_musicbar);
+            fragmentTransaction.hide(musicBarFragment);
+            fragmentTransaction.commitAllowingStateLoss();
+        } catch (IllegalStateException e) {
+            Toast.makeText(this, "Error: failed to update fragment", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
