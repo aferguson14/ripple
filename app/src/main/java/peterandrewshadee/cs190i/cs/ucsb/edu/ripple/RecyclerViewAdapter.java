@@ -40,6 +40,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
                         Log.d("getBroadcasts", bc.toString());
                         broadcastList.add(bc);
                         notifyDataSetChanged();
+                        StationState.NotifyListeningStationDataChanged();
                         Log.d("stationslist", "broadcast update");
                     }
                 }

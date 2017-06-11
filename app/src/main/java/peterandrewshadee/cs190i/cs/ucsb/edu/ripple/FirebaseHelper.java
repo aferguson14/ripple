@@ -167,12 +167,14 @@ class FirebaseHelper {
 //        dbr.child("is_playing").setValue(broadcast.getIs_playing());
         dbr.child("songName").setValue(broadcast.getSongName());
         dbr.child("songId").setValue(broadcast.getSongId());
+        StationState.NotifyBroadcastStationDataChanged();
     }
 
     void updateBroadcastPlayState(String broadcasterId, Broadcast broadcast){
         DatabaseReference dbr = broadcasts.child(broadcasterId);
         dbr.child("progress_ms").setValue(broadcast.getProgress_ms());
         dbr.child("is_playing").setValue(broadcast.getIs_playing());
+        StationState.NotifyBroadcastStationDataChanged();
         timeAtUpdate = System.currentTimeMillis();
     }
 
