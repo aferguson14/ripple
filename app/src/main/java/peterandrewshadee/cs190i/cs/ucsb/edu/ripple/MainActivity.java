@@ -230,11 +230,15 @@ public class MainActivity extends AppCompatActivity implements StationState.List
 
     @Override
     public void OnListeningStationStart() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment musicBarFragment = getSupportFragmentManager().findFragmentById(R.id.main_musicbar);
-        fragmentTransaction.show(musicBarFragment);
-        fragmentTransaction.commit();
+        try {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            Fragment musicBarFragment = getSupportFragmentManager().findFragmentById(R.id.main_musicbar);
+            fragmentTransaction.show(musicBarFragment);
+            fragmentTransaction.commitAllowingStateLoss();
+        } catch (IllegalStateException e) {
+            Toast.makeText(this, "Error: failed to update fragment", Toast.LENGTH_SHORT).show();
+        }
 
         if(isBroadcasting) {
 //            FirebaseHelper.GetInstance().deleteBroadcast(myUserId);
