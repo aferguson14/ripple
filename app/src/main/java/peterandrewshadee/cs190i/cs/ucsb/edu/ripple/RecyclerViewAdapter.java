@@ -4,11 +4,17 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +26,30 @@ import java.util.List;
 public class RecyclerViewAdapter extends RecyclerView.Adapter {
 
     ViewGroup mParent;
-    final List<Broadcast> broadcastList = new ArrayList<>();
+    List<Broadcast> broadcastList = new ArrayList<>();
+
+    public RecyclerViewAdapter() {
+        DatabaseReference dbr = FirebaseHelper.GetInstance().getBroadcastRef();
+        dbr.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot != null) {
+                    broadcastList.clear();
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        Broadcast bc = ds.getValue(Broadcast.class);
+                        Log.d("getBroadcasts", bc.toString());
+                        broadcastList.add(bc);
+                        notifyDataSetChanged();
+                        Log.d("stationslist", "broadcast update");
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("getBroadcasts", "db error: " + databaseError.getMessage());
+            }
+        });
+    }
 
     public void Update(@NonNull List<Broadcast> _broadcastList) {
         broadcastList.clear();
@@ -48,7 +77,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
 
         ((TextView)holder.itemView.findViewById(R.id.stationlist_item_text_song)).setText(b.getSongName());
         ((TextView)holder.itemView.findViewById(R.id.stationlist_item_text_artist)).setText(b.getArtist());
-        String caption = b.getUserName() + " and " + b.getListeners().size() + " listeners";
+        String caption = "";
+        if (b.getUserName() != null)
+            caption += b.getUserName();
+        else
+            caption += b.getId();
+        if (b.getListeners() != null)
+            caption += " and " + (b.getListeners().size()-1) + " listeners";
+        else
+            caption += " and 0 listeners";
+//        String caption = b.getUserName() + " and " + 0 + " listeners";
+//        if (b.getListeners() != null)
+//            caption = b.getUserName() + " and " + b.getListeners().size() + " listeners";
+//        String caption = b.getUserName() + " and " + b.getListeners().size() + " listeners";
         ((TextView)holder.itemView.findViewById(R.id.stationlist_item_text_caption)).setText(caption);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

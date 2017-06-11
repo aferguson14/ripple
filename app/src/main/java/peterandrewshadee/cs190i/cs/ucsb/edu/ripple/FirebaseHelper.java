@@ -97,16 +97,6 @@ class FirebaseHelper {
 
 
     // broadcaster's spotify client userId -> broadcast info (incl list of listeners)
-//    void addBroadcast(User broadcaster) {
-//        Broadcast bc = new Broadcast(broadcaster.getUserId());
-//        broadcasts.child(broadcaster.getUserId()).setValue(bc);
-//    }
-
-//    void addBroadcast(String broadcasterId) {
-//        Broadcast bc = new Broadcast(broadcasterId);
-//        broadcasts.child(broadcasterId).setValue(bc);
-//    }
-
     void addBroadcast(final String broadcasterId) {
         MainActivity.spotifyApiController.fetchCurrentlyPlaying(new Callback<CurrentlyPlaying>(){
             //CurrentlyPlaying attributes: timestamp, progress_ms, item (current track), is_playing
@@ -188,7 +178,6 @@ class FirebaseHelper {
     }
 
     void getBroadcasts() {
-
         broadcasts.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -197,6 +186,26 @@ class FirebaseHelper {
                         Broadcast bc = ds.getValue(Broadcast.class);
                         Log.d("getBroadcasts", bc.toString());
                         broadcastList.add(bc);
+                        Log.d("stationslist", "broadcast update");
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("getBroadcasts", "db error: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    void getBroadcasts(final List bcList) {
+        broadcasts.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot != null) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        Broadcast bc = ds.getValue(Broadcast.class);
+                        Log.d("getBroadcasts", bc.toString());
+                        bcList.add(bc);
                         Log.d("stationslist", "broadcast update");
                     }
                 }
@@ -226,5 +235,6 @@ class FirebaseHelper {
         broadcasts.child(broadcasterId).child("listeners").child(listenerId).removeValue();
     }
 
+    DatabaseReference getBroadcastRef() { return broadcasts; }
 
 }

@@ -62,7 +62,10 @@ public class StationsListFragment extends Fragment {
             bcastlist.add(b);
         }
 
-        mRecyclerAdapter.Update(bcastlist);
+//        mRecyclerAdapter.Update(bcastlist);
+//        FirebaseHelper.GetInstance().getBroadcasts();
+//        mRecyclerAdapter.Update(FirebaseHelper.broadcastList);
+//        Log.d("STATIONS LIST FRAG", "ONCREATE CALLED");
 
         // TEST CODE
         // TEST CODE
