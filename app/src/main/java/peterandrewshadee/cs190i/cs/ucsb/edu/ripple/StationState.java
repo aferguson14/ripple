@@ -133,10 +133,10 @@ public class StationState {
         }
 
         if (newStation != null) {
-            listeningStation = new StationState(newStation);
-            if (prevStation == null || listeningStation.userId != prevStation.userId) {
-                ListenToDB();
-            }
+                listeningStation = new StationState(newStation);
+                if (prevStation == null || listeningStation.userId != prevStation.userId) {
+                    ListenToDB();
+                }
         } else {
             listeningStation = null;
             CancelListenToDB();

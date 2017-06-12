@@ -99,11 +99,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StationState.UpdateListeningStation(new StationState(b));
-                if (MainActivity.currentBroadcastId != null)
-                    FirebaseHelper.GetInstance().deleteListener(MainActivity.myUserId, MainActivity.currentBroadcastId);
-                FirebaseHelper.GetInstance().addListener(MainActivity.myUserId, b.getId());
-                MainActivity.currentBroadcastId = b.getId();
+                if(!MainActivity.isBroadcasting) {
+                    StationState.UpdateListeningStation(new StationState(b));
+                    if (MainActivity.currentBroadcastId != null)
+                        FirebaseHelper.GetInstance().deleteListener(MainActivity.myUserId, MainActivity.currentBroadcastId);
+                    FirebaseHelper.GetInstance().addListener(MainActivity.myUserId, b.getId());
+                    MainActivity.currentBroadcastId = b.getId();
+                }
+                else{
+                    StationState.TryClearBroadcastStationWithConfirmationDialog(mParent.getContext());
+                }
             }
         });
     }

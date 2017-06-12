@@ -138,11 +138,13 @@ class FirebaseHelper {
                     dbr.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot != null) {{
+                            if (dataSnapshot != null) {
                                     newBroadcast = dataSnapshot.getValue(Broadcast.class);
+                                if(newBroadcast!=null) {
                                     StationState.UpdateBroadcastStation(new StationState(newBroadcast));
 //                                    StationState.NotifyBroadcastStationDataChanged();
                                 }
+
                             }
                         }
                         @Override
@@ -162,6 +164,46 @@ class FirebaseHelper {
                 Log.d("Track failure", error.toString());
             }
         });
+
+
+        //update broadcast from Web API when listeners update
+        DatabaseReference dbr = FirebaseHelper.GetInstance().getBroadcastRef().child(MainActivity.myUserId).child("listeners");
+        dbr.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot != null) {
+                    MainActivity.spotifyApiController.fetchCurrentlyPlaying(new Callback<CurrentlyPlaying>(){
+                        //CurrentlyPlaying attributes: timestamp, progress_ms, item (current track), is_playing
+                        @Override
+                        public void success(CurrentlyPlaying currentlyPlaying, Response response) {
+                            if(currentlyPlaying != null) {
+                                Map<String, String> listenerList = new HashMap<>();
+                                Broadcast bc = new Broadcast(broadcasterId);
+                                bc.setSongId(currentlyPlaying.item.id);
+                                bc.setSongName(currentlyPlaying.item.name);
+                                bc.setArtist(currentlyPlaying.item.artists.get(0).name);
+                                bc.setIs_playing(currentlyPlaying.is_playing);
+                                bc.setDuration_ms(currentlyPlaying.item.duration_ms);
+                                bc.setProgress_ms((long)(currentlyPlaying.progress_ms));
+                                broadcasts.child(broadcasterId).setValue(bc);
+                                updateBroadcast(MainActivity.myUserId, bc);
+                            }
+                            else
+                                Log.d("restapi", "FAILURE");
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            Log.d("Track failure", error.toString());
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("getBroadcasts", "db error: " + databaseError.getMessage());
+            }
+        });
     }
 
     void updateBroadcast(String broadcasterId, Broadcast broadcast) {
@@ -171,6 +213,7 @@ class FirebaseHelper {
         dbr.child("is_playing").setValue(broadcast.getIs_playing());
         dbr.child("progress_ms").setValue(broadcast.getProgress_ms());
         dbr.child("songName").setValue(broadcast.getSongName());
+        dbr.child("songId").setValue(broadcast.getSongId());
     }
 
     void updateBroadcast(User broadcaster, Broadcast broadcast) {
