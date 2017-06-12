@@ -121,7 +121,7 @@ public class StationState {
     public static void UpdateListeningStation(StationState newStation) {
         StationState prevStation = null;
         if (listeningStation != null) {
-            new StationState(listeningStation);
+            prevStation = new StationState(listeningStation);
         }
 
         if (newStation != null) {
@@ -174,7 +174,7 @@ public class StationState {
     public static void UpdateBroadcastStation (StationState newStation) {
         StationState prevStation = null;
         if (broadcastStation != null) {
-            new StationState(broadcastStation);
+            prevStation = new StationState(broadcastStation);
         }
 
         if (newStation != null) {

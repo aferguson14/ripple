@@ -119,7 +119,6 @@ class FirebaseHelper {
 
                     //TODO: need to update DB when listener joins
                     List<String> listenerList = new ArrayList<String>();
-                    listenerList.add("");
                     Broadcast bc = new Broadcast(broadcasterId);
                     bc.setUserName(MainActivity.myUserName);
                     bc.setSongId(currentlyPlaying.item.id);
