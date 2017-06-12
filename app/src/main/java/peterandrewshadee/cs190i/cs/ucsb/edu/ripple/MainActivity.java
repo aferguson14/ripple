@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements StationState.List
 
         //Player
         Config playerConfig = new Config(this, accessToken, CLIENT_ID);
+        playerConfig.useCache(false);
         mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
             @Override
             public void onInitialized(Player player) {

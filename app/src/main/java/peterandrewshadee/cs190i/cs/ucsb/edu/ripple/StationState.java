@@ -263,7 +263,9 @@ public class StationState {
                         try {
                             Broadcast bc = ds.getValue(Broadcast.class);
                             Log.d("listeners", "DB UPDATE: " + bc.getSongName() + " " + bc.getProgress_ms() + "ms");
-                            StationState.UpdateListeningStation(new StationState(bc));
+                            if (bc.getId() == listeningStation.userId) {
+                                StationState.UpdateListeningStation(new StationState(bc));
+                            }
                         } catch (DatabaseException e) {
                             Log.d("listeners", "DB UPDATE: get rekt you have an error");
                         }
