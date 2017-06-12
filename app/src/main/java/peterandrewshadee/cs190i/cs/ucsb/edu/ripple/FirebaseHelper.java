@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -213,10 +214,14 @@ class FirebaseHelper {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot != null) {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        Broadcast bc = ds.getValue(Broadcast.class);
-                        Log.d("getBroadcasts", bc.toString());
-                        broadcastList.add(bc);
-                        Log.d("stationslist", "broadcast update");
+                        try {
+                            Broadcast bc = ds.getValue(Broadcast.class);
+                            Log.d("getBroadcasts", bc.toString());
+                            broadcastList.add(bc);
+                            Log.d("stationslist", "broadcast update");
+                        } catch (DatabaseException e) {
+
+                        }
                     }
                 }
             }

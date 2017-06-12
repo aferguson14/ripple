@@ -35,7 +35,15 @@ public class BroadcastFragment extends Fragment implements StationState.Broadcas
             OnBroadcastSongUpdate(StationState.broadcastStation);
         }
 
+        StationState.SubscribeToBroadcastStationUpdates(this);
+
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        StationState.UnsubscribeFromBroadcastStationUpdates(this);
     }
 
     @Override

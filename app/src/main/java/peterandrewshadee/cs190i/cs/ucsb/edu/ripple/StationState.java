@@ -11,6 +11,7 @@ import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -145,6 +146,7 @@ public class StationState {
             for (ListeningStationUpdateListener listener : listeningStationListeners) {
                 listener.OnListeningStationDie();
             }
+            Log.d("StationState", "Die");
             userWantsToPlay = true;
         }
         else if (prevStation == null) {
@@ -154,16 +156,19 @@ public class StationState {
             for (ListeningStationUpdateListener listener : listeningStationListeners) {
                 listener.OnListeningSongChange(listeningStation);
             }
+            Log.d("StationState", "Start + Change");
         }
         else {
             if (prevStation.IsDifferentSong(listeningStation)) {
                 for (ListeningStationUpdateListener listener : listeningStationListeners) {
                     listener.OnListeningSongChange(listeningStation);
                 }
+                Log.d("StationState", "Change");
             } else {
                 for (ListeningStationUpdateListener listener : listeningStationListeners) {
                     listener.OnListeningSongUpdate(listeningStation);
                 }
+                Log.d("StationState", "Update");
             }
         }
     }
