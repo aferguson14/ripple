@@ -250,14 +250,17 @@ public class MainActivity extends AppCompatActivity implements StationState.List
     public void OnListeningSongChange(StationState stationState) {
         //TODO: test
         Log.d("listeners", "onListeningSongCHANGE");
-        if(stationState.isPlaying && stationState.userWantsToPlay) {
-            int songProgressMilli = (int) (stationState.songProgressMs + ((FirebaseHelper.GetInstance().timeAtUpdate == 0 ) ? 0 : System.currentTimeMillis() - FirebaseHelper.GetInstance().timeAtUpdate));
-            mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressMilli));
-            Log.d("listeners", "songProgress " + songProgressMilli);
+        if(stationState.isPlaying) {
+            if (stationState.userWantsToPlay){
+                Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
+                int songProgressMilli = (int) (stationState.songProgressMs + ((FirebaseHelper.GetInstance().timeAtUpdate == 0) ? 0 : System.currentTimeMillis() - FirebaseHelper.GetInstance().timeAtUpdate));
+                mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressMilli));
+                Log.d("listeners", "songProgress " + songProgressMilli);
+            }
         }
         else{
             Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
-            mPlayer.pause();
+            mPlayer.shutdown();
         }
     }
 
@@ -266,6 +269,7 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         //TODO: test
         Log.d("listeners", "onListeningSongUPDATE");
         if(stationState.isPlaying && stationState.userWantsToPlay) {
+            Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
             int songProgressMilli = (int) (stationState.songProgressMs + ((FirebaseHelper.GetInstance().timeAtUpdate == 0 ) ? 0 : System.currentTimeMillis() - FirebaseHelper.GetInstance().timeAtUpdate));
             mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressMilli));
             Log.d("listeners", "songProgress " + songProgressMilli);
@@ -273,7 +277,8 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         }
         else{
             Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
-            mPlayer.pause();
+            mPlayer.shutdown();
+//            mPlayer.pause();
         }
 //        if(stationState.isPlaying && stationState.userWantsToPlay) {
 //            mPlayer.play("spotify:track:" + stationState.songId);
