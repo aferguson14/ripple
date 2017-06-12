@@ -40,10 +40,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         try {
                             Broadcast bc = ds.getValue(Broadcast.class);
-                            Log.d("getBroadcasts", bc.toString());
-                            broadcastList.add(bc);
-                            notifyDataSetChanged();
-                            Log.d("stationslist", "broadcast update");
+                            if (bc != null) {
+                                broadcastList.add(bc);
+                                notifyDataSetChanged();
+                                Log.d("stationslist", "broadcast update");
+                            }
                         } catch (DatabaseException e) {
 
                         }
