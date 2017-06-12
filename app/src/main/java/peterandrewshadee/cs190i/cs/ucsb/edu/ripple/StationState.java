@@ -3,6 +3,13 @@ package peterandrewshadee.cs190i.cs.ucsb.edu.ripple;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -126,8 +133,12 @@ public class StationState {
 
         if (newStation != null) {
             listeningStation = new StationState(newStation);
+            if (prevStation == null || listeningStation.userId != prevStation.userId) {
+                ListenToDB();
+            }
         } else {
             listeningStation = null;
+            CancelListenToDB();
         }
 
         if (newStation == null) {
@@ -213,22 +224,57 @@ public class StationState {
     public static void TryClearBroadcastStationWithConfirmationDialog (Context context) {
         if (broadcastStation != null) {
             new AlertDialog.Builder(context)
-                .setTitle("Stop Broadcasting")
-                .setMessage("Are you sure you want to stop broadcasting?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        UpdateBroadcastStation(null);
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
+                    .setTitle("Stop Broadcasting")
+                    .setMessage("Are you sure you want to stop broadcasting?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            UpdateBroadcastStation(null);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
 
+        }
+    }
+
+
+
+    private static ValueEventListener dbListener = null;
+
+    private static void ListenToDB () {
+        Log.d("listeners", "listening to db: " + listeningStation.userId);
+        CancelListenToDB();
+        DatabaseReference dbr = FirebaseHelper.GetInstance().getBroadcastRef().child(listeningStation.userId);
+        dbListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot ds) {
+                if (ds != null) {
+                        try {
+                            Broadcast bc = ds.getValue(Broadcast.class);
+                            Log.d("listeners", "DB UPDATE: " + bc.getSongName() + " " + bc.getProgress_ms() + "ms");
+                            StationState.UpdateListeningStation(new StationState(bc));
+                        } catch (DatabaseException e) {
+                            Log.d("listeners", "DB UPDATE: get rekt you have an error");
+                        }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+        dbr.addValueEventListener(dbListener);
+    }
+
+    private static void CancelListenToDB() {
+        DatabaseReference dbr = FirebaseHelper.GetInstance().getBroadcastRef().child(listeningStation.userId);
+        if (dbListener != null) {
+            dbr.removeEventListener(dbListener);
         }
     }
 
