@@ -223,13 +223,7 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         StationState.UnsubscribeFromListeningStationUpdates(this);
     }
 
-
-    /*
-     * Currently playing song events
-     */
-
-    @Override
-    public void OnListeningStationStart() {
+    private void ShowMusicBar () {
         try {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -239,15 +233,21 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         } catch (IllegalStateException e) {
             Toast.makeText(this, "Error: failed to update fragment", Toast.LENGTH_SHORT).show();
         }
+    }
 
-        if(isBroadcasting) {
-//            FirebaseHelper.GetInstance().deleteBroadcast(myUserId);
-//            isBroadcasting = false;
-        }
+    /*
+     * Currently playing song events
+     */
+
+
+    @Override
+    public void OnListeningStationStart() {
+        ShowMusicBar();
     }
 
     @Override
     public void OnListeningSongChange(StationState stationState) {
+        ShowMusicBar();
         //TODO: test
         Log.d("listeners", "onListeningSongCHANGE");
         if(stationState.isPlaying && stationState.userWantsToPlay) {
