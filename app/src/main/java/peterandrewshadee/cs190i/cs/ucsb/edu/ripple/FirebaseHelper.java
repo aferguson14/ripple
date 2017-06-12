@@ -185,7 +185,7 @@ class FirebaseHelper {
                                 bc.setIs_playing(currentlyPlaying.is_playing);
                                 bc.setDuration_ms(currentlyPlaying.item.duration_ms);
                                 bc.setProgress_ms((long)(currentlyPlaying.progress_ms));
-                                broadcasts.child(broadcasterId).setValue(bc);
+//                                broadcasts.child(broadcasterId).setValue(bc);
                                 updateBroadcast(MainActivity.myUserId, bc);
                             }
                             else
