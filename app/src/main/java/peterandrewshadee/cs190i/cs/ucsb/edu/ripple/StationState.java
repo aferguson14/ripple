@@ -3,6 +3,7 @@ package peterandrewshadee.cs190i.cs.ucsb.edu.ripple;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -134,6 +135,7 @@ public class StationState {
             for (ListeningStationUpdateListener listener : listeningStationListeners) {
                 listener.OnListeningStationDie();
             }
+            Log.d("StationState", "Die");
             userWantsToPlay = true;
         }
         else if (prevStation == null) {
@@ -143,16 +145,19 @@ public class StationState {
             for (ListeningStationUpdateListener listener : listeningStationListeners) {
                 listener.OnListeningSongChange(listeningStation);
             }
+            Log.d("StationState", "Start + Change");
         }
         else {
             if (prevStation.IsDifferentSong(listeningStation)) {
                 for (ListeningStationUpdateListener listener : listeningStationListeners) {
                     listener.OnListeningSongChange(listeningStation);
                 }
+                Log.d("StationState", "Change");
             } else {
                 for (ListeningStationUpdateListener listener : listeningStationListeners) {
                     listener.OnListeningSongUpdate(listeningStation);
                 }
+                Log.d("StationState", "Update");
             }
         }
     }

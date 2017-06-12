@@ -144,6 +144,9 @@ public class MainActivity extends AppCompatActivity implements StationState.List
                         bc.setArtist(metadata.getString(METADATA_KEY_ARTIST));
                         bc.setDuration_ms(metadata.getLong(METADATA_KEY_DURATION));
                         bc.setSongName(metadata.getString(METADATA_KEY_TITLE));
+
+                        StationState.UpdateBroadcastStation(new StationState(bc));
+
                         MainActivity.spotifyApiController.fetchCurrentlyPlaying(new Callback<CurrentlyPlaying>(){
                             //CurrentlyPlaying attributes: timestamp, progress_ms, item (current track), is_playing
                             @Override
@@ -224,13 +227,7 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         StationState.UnsubscribeFromListeningStationUpdates(this);
     }
 
-
-    /*
-     * Currently playing song events
-     */
-
-    @Override
-    public void OnListeningStationStart() {
+    private void ShowMusicBar () {
         try {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -240,15 +237,21 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         } catch (IllegalStateException e) {
             Toast.makeText(this, "Error: failed to update fragment", Toast.LENGTH_SHORT).show();
         }
+    }
 
-        if(isBroadcasting) {
-//            FirebaseHelper.GetInstance().deleteBroadcast(myUserId);
-//            isBroadcasting = false;
-        }
+    /*
+     * Currently playing song events
+     */
+
+
+    @Override
+    public void OnListeningStationStart() {
+        ShowMusicBar();
     }
 
     @Override
     public void OnListeningSongChange(StationState stationState) {
+        ShowMusicBar();
         //TODO: test
         Log.d("listeners", "onListeningSongCHANGE");
         if(stationState.isPlaying && stationState.userWantsToPlay) {
