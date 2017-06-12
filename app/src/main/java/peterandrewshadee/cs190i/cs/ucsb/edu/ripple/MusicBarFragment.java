@@ -95,7 +95,11 @@ public class MusicBarFragment extends Fragment implements StationState.Listening
     private void UpdateStationState(StationState stationState, boolean userWantsToPlay) {
         textSong.setText(SanitizeString(stationState.songTitle));
         textArtist.setText(SanitizeString(stationState.songArtist));
-        textCaption.setText(SanitizeString(stationState.userName + " and " + stationState.listenerIds.size() + " listeners"));
+        String caption = stationState.userName + " and " + stationState.listenerIds.size() + " listeners";
+        if (stationState.userName == null)
+            caption = MainActivity.myUserId + " and " + stationState.listenerIds.size() + " listeners";
+        textCaption.setText(SanitizeString(caption));
+//        textCaption.setText(SanitizeString(stationState.userName + " and " + stationState.listenerIds.size() + " listeners"));
 
         playPauseButton.setEnabled(stationState.isPlaying);
         playPauseButton.setChecked(StationState.userWantsToPlay);
