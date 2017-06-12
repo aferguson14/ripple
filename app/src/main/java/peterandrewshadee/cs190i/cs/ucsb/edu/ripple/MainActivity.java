@@ -143,6 +143,9 @@ public class MainActivity extends AppCompatActivity implements StationState.List
                         bc.setArtist(metadata.getString(METADATA_KEY_ARTIST));
                         bc.setDuration_ms(metadata.getLong(METADATA_KEY_DURATION));
                         bc.setSongName(metadata.getString(METADATA_KEY_TITLE));
+
+                        StationState.UpdateBroadcastStation(new StationState(bc));
+
                         MainActivity.spotifyApiController.fetchCurrentlyPlaying(new Callback<CurrentlyPlaying>(){
                             //CurrentlyPlaying attributes: timestamp, progress_ms, item (current track), is_playing
                             @Override
