@@ -224,6 +224,8 @@ public class StationState {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         UpdateBroadcastStation(null);
+                        if (MainActivity.myUserId != null) FirebaseHelper.GetInstance().deleteBroadcast(MainActivity.myUserId);
+                        MainActivity.isBroadcasting = false;
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {

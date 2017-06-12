@@ -124,7 +124,7 @@ class FirebaseHelper {
 //                    listenerList.add("index0");
 //                    listenerList.add("index1");
                     Map<String, String> listenerList = new HashMap<>();
-                    listenerList.put("no", "false");
+//                    listenerList.put("no", "false");
                     Broadcast bc = new Broadcast(broadcasterId);
                     bc.setUserName(MainActivity.myUserName);
                     bc.setSongId(currentlyPlaying.item.id);
