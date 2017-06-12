@@ -191,7 +191,7 @@ public class StationState {
         StationState prevStation = null;
         if (broadcastStation != null) {
             if (listeningStation != null) {
-                UpdateListeningStation(null);
+                //UpdateListeningStation(null);
             }
             prevStation = new StationState(broadcastStation);
         }
@@ -269,8 +269,12 @@ public class StationState {
                 if (ds != null) {
                         try {
                             Broadcast bc = ds.getValue(Broadcast.class);
-                            if (bc.getId() == listeningStation.userId) {
-                                StationState.UpdateListeningStation(new StationState(bc));
+                            if (bc != null) {
+                                if (bc.getId() == listeningStation.userId) {
+                                    StationState.UpdateListeningStation(new StationState(bc));
+                                }
+                            } else {
+                                Log.d("listeners", "DB UPDATE failed");
                             }
                         } catch (DatabaseException e) {
                             Log.d("listeners", "DB UPDATE: get rekt you have an error");
