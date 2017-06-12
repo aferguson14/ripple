@@ -19,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by peterwerner on 6/8/17.
@@ -87,20 +88,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
             caption += b.getUserName();
         else
             caption += b.getId();
-        if (b.getListeners() != null)
-            caption += " and " + (b.getListeners().size()-1) + " listeners";
-        else
+        if (b.getListeners() != null) {
+            caption += " and " + b.getListeners().size() + " listeners";
+        }
+        else {
             caption += " and 0 listeners";
-//        String caption = b.getUserName() + " and " + 0 + " listeners";
-//        if (b.getListeners() != null)
-//            caption = b.getUserName() + " and " + b.getListeners().size() + " listeners";
-//        String caption = b.getUserName() + " and " + b.getListeners().size() + " listeners";
+        }
         ((TextView)holder.itemView.findViewById(R.id.stationlist_item_text_caption)).setText(caption);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 StationState.UpdateListeningStation(new StationState(b));
+                if (MainActivity.currentBroadcastId != null)
+                    FirebaseHelper.GetInstance().deleteListener(MainActivity.myUserId, MainActivity.currentBroadcastId);
+                FirebaseHelper.GetInstance().addListener(MainActivity.myUserId, b.getId());
+                MainActivity.currentBroadcastId = b.getId();
             }
         });
     }

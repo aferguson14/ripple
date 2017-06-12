@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements StationState.List
     private Player mPlayer;
 
     public static Boolean isBroadcasting;
+    public static String currentBroadcastId;
 
     public MediaController.Callback mSessionCallback;
     public MediaController spotifyMediaController;

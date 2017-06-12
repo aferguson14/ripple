@@ -7,6 +7,7 @@ import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
 import android.media.session.PlaybackState;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -17,7 +18,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kaaes.spotify.webapi.android.models.CurrentlyPlaying;
 import kaaes.spotify.webapi.android.models.UserPrivate;
@@ -119,7 +122,11 @@ class FirebaseHelper {
 //                    ));
 
                     //TODO: need to update DB when listener joins
-                    List<String> listenerList = new ArrayList<String>();
+//                    List<String> listenerList = new ArrayList<>();
+//                    listenerList.add("index0");
+//                    listenerList.add("index1");
+                    Map<String, String> listenerList = new HashMap<>();
+
                     Broadcast bc = new Broadcast(broadcasterId);
                     bc.setUserName(MainActivity.myUserName);
                     bc.setSongId(currentlyPlaying.item.id);

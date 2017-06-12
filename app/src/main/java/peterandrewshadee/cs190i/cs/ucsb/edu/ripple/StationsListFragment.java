@@ -35,43 +35,6 @@ public class StationsListFragment extends Fragment {
         mRecyclerView.setAdapter(mRecyclerAdapter);
         mRecyclerView.setItemAnimator(null);
 
-
-        // TODO: remove this test code + replace with DB listener
-
-        // TEST CODE
-        // TEST CODE
-        // TEST CODE
-
-
-        List<Broadcast> bcastlist = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            Broadcast b = new Broadcast(i + "");
-            if (i%3 == 0) {
-                b.setArtist("Rostam");
-                b.setSongName("Gravity Don't Pull Me");
-                b.setUserName("Peter Werner");
-            } else if (i%3 == 1) {
-                b.setArtist("Kendrick Lamar");
-                b.setSongName("BLOOD.");
-                b.setUserName("Shadee Barzin");
-            } else {
-                b.setArtist("Tourist");
-                b.setSongName("Placid Acid");
-                b.setUserName("Andrew Ferguson");
-            }
-            bcastlist.add(b);
-        }
-
-//        mRecyclerAdapter.Update(bcastlist);
-//        FirebaseHelper.GetInstance().getBroadcasts();
-//        mRecyclerAdapter.Update(FirebaseHelper.broadcastList);
-//        Log.d("STATIONS LIST FRAG", "ONCREATE CALLED");
-
-        // TEST CODE
-        // TEST CODE
-        // TEST CODE
-
-
         return view;
     }
 
