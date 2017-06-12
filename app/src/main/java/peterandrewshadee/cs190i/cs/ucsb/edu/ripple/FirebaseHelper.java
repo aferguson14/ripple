@@ -38,6 +38,7 @@ class FirebaseHelper {
     private DatabaseReference listeners;
 
     static final List<Broadcast> broadcastList = new ArrayList<>();
+    static Broadcast newBroadcast;
     static long timeAtUpdate;
 
 
@@ -104,21 +105,20 @@ class FirebaseHelper {
             @Override
             public void success(CurrentlyPlaying currentlyPlaying, Response response) {
                 if(currentlyPlaying != null) {
-                    StationState.UpdateBroadcastStation(new StationState(
-                            MainActivity.myUserId,
-                            MainActivity.myUserName,
-                            currentlyPlaying.item.id,
-                            currentlyPlaying.item.name,
-                            currentlyPlaying.item.artists.get(0).name, //TODO: add all artists
-                            currentlyPlaying.is_playing,
-                            (long)(currentlyPlaying.item.duration_ms),
-                            (long)(currentlyPlaying.progress_ms),
-                            new ArrayList<String>()
-                    ));
+//                    StationState.UpdateBroadcastStation(new StationState(
+//                            MainActivity.myUserId,
+//                            MainActivity.myUserName,
+//                            currentlyPlaying.item.id,
+//                            currentlyPlaying.item.name,
+//                            currentlyPlaying.item.artists.get(0).name, //TODO: add all artists
+//                            currentlyPlaying.is_playing,
+//                            (long)(currentlyPlaying.item.duration_ms),
+//                            (long)(currentlyPlaying.progress_ms),
+//                            new ArrayList<String>()
+//                    ));
 
                     //TODO: need to update DB when listener joins
                     List<String> listenerList = new ArrayList<String>();
-                    listenerList.add("");
                     Broadcast bc = new Broadcast(broadcasterId);
                     bc.setUserName(MainActivity.myUserName);
                     bc.setSongId(currentlyPlaying.item.id);
@@ -129,6 +129,25 @@ class FirebaseHelper {
                     bc.setProgress_ms((long)(currentlyPlaying.progress_ms));
                     bc.setListeners(listenerList);
                     broadcasts.child(broadcasterId).setValue(bc);
+
+                    //new stationstate w/listener
+                    DatabaseReference dbr = FirebaseHelper.GetInstance().getBroadcastRef().child(MainActivity.myUserId);
+                    dbr.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot != null) {{
+                                    newBroadcast = dataSnapshot.getValue(Broadcast.class);
+                                    StationState.UpdateBroadcastStation(new StationState(newBroadcast));
+//                                    StationState.NotifyBroadcastStationDataChanged();
+                                }
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.d("getBroadcasts", "db error: " + databaseError.getMessage());
+                        }
+                    });
+
                 }
                 else
                     Log.d("restapi", "FAILURE");
@@ -167,6 +186,8 @@ class FirebaseHelper {
 //        dbr.child("is_playing").setValue(broadcast.getIs_playing());
         dbr.child("songName").setValue(broadcast.getSongName());
         dbr.child("songId").setValue(broadcast.getSongId());
+
+
         StationState.NotifyBroadcastStationDataChanged();
     }
 

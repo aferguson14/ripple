@@ -24,6 +24,7 @@ import com.spotify.sdk.android.player.PlayConfig;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
+import com.spotify.sdk.android.player.PlayerStateCallback;
 import com.spotify.sdk.android.player.Spotify;
 
 import java.util.ArrayList;
@@ -230,11 +231,15 @@ public class MainActivity extends AppCompatActivity implements StationState.List
 
     @Override
     public void OnListeningStationStart() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment musicBarFragment = getSupportFragmentManager().findFragmentById(R.id.main_musicbar);
-        fragmentTransaction.show(musicBarFragment);
-        fragmentTransaction.commit();
+        try {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            Fragment musicBarFragment = getSupportFragmentManager().findFragmentById(R.id.main_musicbar);
+            fragmentTransaction.show(musicBarFragment);
+            fragmentTransaction.commitAllowingStateLoss();
+        } catch (IllegalStateException e) {
+            Toast.makeText(this, "Error: failed to update fragment", Toast.LENGTH_SHORT).show();
+        }
 
         if(isBroadcasting) {
 //            FirebaseHelper.GetInstance().deleteBroadcast(myUserId);
@@ -243,34 +248,91 @@ public class MainActivity extends AppCompatActivity implements StationState.List
     }
 
     @Override
-    public void OnListeningSongChange(StationState stationState) {
+    public void OnListeningSongChange(final StationState stationState) {
         //TODO: test
         Log.d("listeners", "onListeningSongCHANGE");
-        if(stationState.isPlaying && stationState.userWantsToPlay) {
-            int songProgressMilli = (int) (stationState.songProgressMs + ((FirebaseHelper.GetInstance().timeAtUpdate == 0 ) ? 0 : System.currentTimeMillis() - FirebaseHelper.GetInstance().timeAtUpdate));
-            mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressMilli));
-            Log.d("listeners", "songProgress " + songProgressMilli);
+
+        if(stationState.isPlaying) {
+            if (stationState.userWantsToPlay){
+                mPlayer.getPlayerState(new PlayerStateCallback() {
+                    @Override
+                    public void onPlayerState(PlayerState playerState) {
+                        int songProgressMilli = (int) (stationState.songProgressMs + ((FirebaseHelper.GetInstance().timeAtUpdate == 0) ? 0 : System.currentTimeMillis() - FirebaseHelper.GetInstance().timeAtUpdate));
+                        if(playerState.playing){
+                            mPlayer.pause();
+                            mPlayer.play("spotify:track:" + stationState.songId);
+                            mPlayer.seekToPosition(songProgressMilli);
+//                            mPlayer.resume();
+                        }
+                        else{
+                            mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressMilli));
+                        }
+                    }
+                });
+                Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
+//                int songProgressMilli = (int) (stationState.songProgressMs + ((FirebaseHelper.GetInstance().timeAtUpdate == 0) ? 0 : System.currentTimeMillis() - FirebaseHelper.GetInstance().timeAtUpdate));
+//                mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressMilli));
+//                mPlayer.resume();
+            }
         }
         else{
             Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
+
             mPlayer.pause();
         }
     }
 
     @Override
-    public void OnListeningSongUpdate(StationState stationState) {
+    public void OnListeningSongUpdate(final StationState stationState) {
         //TODO: test
         Log.d("listeners", "onListeningSongUPDATE");
-        if(stationState.isPlaying && stationState.userWantsToPlay) {
-            int songProgressMilli = (int) (stationState.songProgressMs + ((FirebaseHelper.GetInstance().timeAtUpdate == 0 ) ? 0 : System.currentTimeMillis() - FirebaseHelper.GetInstance().timeAtUpdate));
-            mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressMilli));
-            Log.d("listeners", "songProgress " + songProgressMilli);
 
+        if(stationState.isPlaying && stationState.userWantsToPlay) {
+            mPlayer.getPlayerState(new PlayerStateCallback() {
+                @Override
+                public void onPlayerState(PlayerState playerState) {
+                    int songProgressMilli = (int) (stationState.songProgressMs + ((FirebaseHelper.GetInstance().timeAtUpdate == 0) ? 0 : System.currentTimeMillis() - FirebaseHelper.GetInstance().timeAtUpdate));
+                    if(playerState.playing){
+                        mPlayer.pause();
+                        mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressMilli));
+//                            mPlayer.resume();
+                    }
+                    else{
+                        mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressMilli));
+                    }
+                }
+            });
+            Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
+//                int songProgressMilli = (int) (stationState.songProgressMs + ((FirebaseHelper.GetInstance().timeAtUpdate == 0) ? 0 : System.currentTimeMillis() - FirebaseHelper.GetInstance().timeAtUpdate));
+//                mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressMilli));
+//                mPlayer.resume();
         }
         else{
             Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
+
             mPlayer.pause();
         }
+
+
+
+
+
+//        if(stationState.isPlaying && stationState.userWantsToPlay) {
+//
+//            Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
+//            int songProgressMilli = (int) (stationState.songProgressMs + ((FirebaseHelper.GetInstance().timeAtUpdate == 0 ) ? 0 : System.currentTimeMillis() - FirebaseHelper.GetInstance().timeAtUpdate));
+////            mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressMilli));
+//            mPlayer.resume();
+//            mPlayer.seekToPosition(songProgressMilli);
+//
+//            Log.d("listeners", "songProgress " + songProgressMilli);
+//
+//        }
+//        else{
+//            Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
+////            mPlayer.shutdown();
+//            mPlayer.pause();
+//        }
 //        if(stationState.isPlaying && stationState.userWantsToPlay) {
 //            mPlayer.play("spotify:track:" + stationState.songId);
 //
