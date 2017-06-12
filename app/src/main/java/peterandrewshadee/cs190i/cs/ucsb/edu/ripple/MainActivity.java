@@ -296,6 +296,7 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         } catch (IllegalStateException e) {
             Toast.makeText(this, "Error: failed to update fragment", Toast.LENGTH_SHORT).show();
         }
+        mPlayer.pause();
     }
 
 

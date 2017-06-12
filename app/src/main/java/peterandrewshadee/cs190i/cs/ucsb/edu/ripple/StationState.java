@@ -190,6 +190,9 @@ public class StationState {
     public static void UpdateBroadcastStation (StationState newStation) {
         StationState prevStation = null;
         if (broadcastStation != null) {
+            if (listeningStation != null) {
+                UpdateListeningStation(null);
+            }
             prevStation = new StationState(broadcastStation);
         }
 
@@ -254,6 +257,9 @@ public class StationState {
     private static ValueEventListener dbListener = null;
 
     private static void ListenToDB () {
+        if (listeningStation == null) {
+            return;
+        }
         Log.d("listeners", "listening to db: " + listeningStation.userId);
         CancelListenToDB();
         DatabaseReference dbr = FirebaseHelper.GetInstance().getBroadcastRef().child(listeningStation.userId);
@@ -263,7 +269,6 @@ public class StationState {
                 if (ds != null) {
                         try {
                             Broadcast bc = ds.getValue(Broadcast.class);
-                            Log.d("listeners", "DB UPDATE: " + bc.getSongName() + " " + bc.getProgress_ms() + "ms");
                             if (bc.getId() == listeningStation.userId) {
                                 StationState.UpdateListeningStation(new StationState(bc));
                             }
@@ -280,6 +285,9 @@ public class StationState {
     }
 
     private static void CancelListenToDB() {
+        if (listeningStation == null) {
+            return;
+        }
         DatabaseReference dbr = FirebaseHelper.GetInstance().getBroadcastRef().child(listeningStation.userId);
         if (dbListener != null) {
             dbr.removeEventListener(dbListener);
