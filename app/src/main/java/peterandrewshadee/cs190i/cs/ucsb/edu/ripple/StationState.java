@@ -229,22 +229,23 @@ public class StationState {
     public static void TryClearBroadcastStationWithConfirmationDialog (Context context) {
         if (broadcastStation != null) {
             new AlertDialog.Builder(context)
-                    .setTitle("Stop Broadcasting")
-                    .setMessage("Are you sure you want to stop broadcasting?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            UpdateBroadcastStation(null);
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .show();
-
+                .setTitle("Stop Broadcasting")
+                .setMessage("Are you sure you want to stop broadcasting?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        UpdateBroadcastStation(null);
+                        if (MainActivity.myUserId != null) FirebaseHelper.GetInstance().deleteBroadcast(MainActivity.myUserId);
+                        MainActivity.isBroadcasting = false;
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
         }
     }
 

@@ -121,12 +121,7 @@ class FirebaseHelper {
 //                            new ArrayList<String>()
 //                    ));
 
-                    //TODO: need to update DB when listener joins
-//                    List<String> listenerList = new ArrayList<>();
-//                    listenerList.add("index0");
-//                    listenerList.add("index1");
                     Map<String, String> listenerList = new HashMap<>();
-
                     Broadcast bc = new Broadcast(broadcasterId);
                     bc.setUserName(MainActivity.myUserName);
                     bc.setSongId(currentlyPlaying.item.id);
