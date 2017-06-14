@@ -1,4 +1,9 @@
-# cs190i_finalproject
+# Ripple: CS 190I Final Project
+Shadee Barzin, Andrew Ferguson, Peter Werner
+Spring 2017
+
+A synchronous music listening app for Android, using Spotify.
+
 
 ### StationState
 Maintains state of track you are listening to and / or tracks you are broadcasting
