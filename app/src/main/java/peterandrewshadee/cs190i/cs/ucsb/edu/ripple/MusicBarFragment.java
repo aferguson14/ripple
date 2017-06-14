@@ -65,7 +65,8 @@ public class MusicBarFragment extends Fragment implements StationState.Listening
                 if (timeLastUpdated != null) {
                     long deltaTime = currTime - timeLastUpdated;
                     if (StationState.listeningStation != null && StationState.listeningStation.isPlaying) {
-                        StationState.listeningStation.songProgressMs += 1000 * deltaTime;
+                        //TODO: modify so that progress bar works
+//                        StationState.listeningStation.songProgressMs += 1000 * deltaTime;
                     }
                     UpdateProgressBarFromOtherThread();
                 }

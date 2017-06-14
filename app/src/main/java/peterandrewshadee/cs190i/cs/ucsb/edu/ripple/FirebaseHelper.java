@@ -43,7 +43,6 @@ class FirebaseHelper {
 
     static final List<Broadcast> broadcastList = new ArrayList<>();
     static Broadcast newBroadcast;
-    static long timeAtUpdate;
 
 
     // call this method on successful login
@@ -109,18 +108,6 @@ class FirebaseHelper {
             @Override
             public void success(CurrentlyPlaying currentlyPlaying, Response response) {
                 if(currentlyPlaying != null) {
-//                    StationState.UpdateBroadcastStation(new StationState(
-//                            MainActivity.myUserId,
-//                            MainActivity.myUserName,
-//                            currentlyPlaying.item.id,
-//                            currentlyPlaying.item.name,
-//                            currentlyPlaying.item.artists.get(0).name, //TODO: add all artists
-//                            currentlyPlaying.is_playing,
-//                            (long)(currentlyPlaying.item.duration_ms),
-//                            (long)(currentlyPlaying.progress_ms),
-//                            new ArrayList<String>()
-//                    ));
-
                     Map<String, String> listenerList = new HashMap<>();
                     Broadcast bc = new Broadcast(broadcasterId);
                     bc.setUserName(MainActivity.myUserName);
@@ -142,7 +129,6 @@ class FirebaseHelper {
                                     newBroadcast = dataSnapshot.getValue(Broadcast.class);
                                 if(newBroadcast!=null) {
                                     StationState.UpdateBroadcastStation(new StationState(newBroadcast));
-//                                    StationState.NotifyBroadcastStationDataChanged();
                                 }
 
                             }
@@ -185,7 +171,6 @@ class FirebaseHelper {
                                 bc.setIs_playing(currentlyPlaying.is_playing);
                                 bc.setDuration_ms(currentlyPlaying.item.duration_ms);
                                 bc.setProgress_ms((long)(currentlyPlaying.progress_ms));
-//                                broadcasts.child(broadcasterId).setValue(bc);
                                 updateBroadcast(MainActivity.myUserId, bc);
                             }
                             else
@@ -233,7 +218,6 @@ class FirebaseHelper {
         dbr.child("songName").setValue(broadcast.getSongName());
         dbr.child("songId").setValue(broadcast.getSongId());
 
-
         StationState.NotifyBroadcastStationDataChanged();
     }
 
@@ -242,7 +226,6 @@ class FirebaseHelper {
         dbr.child("progress_ms").setValue(broadcast.getProgress_ms());
         dbr.child("is_playing").setValue(broadcast.getIs_playing());
         StationState.NotifyBroadcastStationDataChanged();
-        timeAtUpdate = System.currentTimeMillis();
     }
 
     void deleteBroadcast(User broadcaster) {

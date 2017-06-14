@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements StationState.List
     public static String myUserName;
 
     private Player mPlayer;
+    public static long timeAtUpdate;
+    public boolean isMuted;
 
     public static Boolean isBroadcasting;
     public static String currentBroadcastId;
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         });
 
         //Player
+        isMuted = false;
         Config playerConfig = new Config(this, accessToken, CLIENT_ID);
         playerConfig.useCache(false);
         mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
@@ -258,29 +261,44 @@ public class MainActivity extends AppCompatActivity implements StationState.List
     public void OnListeningSongChange(final StationState stationState) {
         ShowMusicBar();
         Log.d("listeners", "onListeningSongCHANGE");
+        timeAtUpdate = System.currentTimeMillis();
 
         if(stationState.isPlaying && StationState.userWantsToPlay) {
             Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
+            Log.d("listeners", "songProgress: " + stationState.songProgressMs);
                 mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition((int)stationState.songProgressMs));
                 mPlayer.resume();
         }
         else{
             Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
+            Log.d("listeners", "songProgress: " + stationState.songProgressMs);
             mPlayer.pause();
         }
     }
 
     @Override
     public void OnListeningSongUpdate(final StationState stationState) {
-        //TODO: test
         Log.d("listeners", "onListeningSongUPDATE");
 
         if(stationState.isPlaying && StationState.userWantsToPlay) {
-            mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition((int)stationState.songProgressMs));
-
+            int songProgressSeconds;
+            /*
+                Updates occur when song metadata changes
+                if: update was a pause/resume, songProgress includes time since metadata changed
+                else: update was a metadata change, time since change reset
+             */
+            if(isMuted) {
+                songProgressSeconds = (int) (stationState.songProgressMs + System.currentTimeMillis() - timeAtUpdate);
+                isMuted = false;
+            }
+            else {
+                timeAtUpdate = System.currentTimeMillis();
+                songProgressSeconds = (int) (stationState.songProgressMs);
+            }
+            mPlayer.play(PlayConfig.createFor("spotify:track:" + stationState.songId).withInitialPosition(songProgressSeconds)); //(int) stationState.songProgressMs
         }
         else{
-            Log.d("listeners", "isPlaying: " + stationState.isPlaying + ", userWantsToPlay: " + stationState.userWantsToPlay);
+            isMuted = true;
             mPlayer.pause();
         }
     }
