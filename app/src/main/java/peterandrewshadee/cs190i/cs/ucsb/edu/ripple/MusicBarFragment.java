@@ -2,6 +2,7 @@ package peterandrewshadee.cs190i.cs.ucsb.edu.ripple;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ public class MusicBarFragment extends Fragment implements StationState.Listening
         textCaption = (TextView) view.findViewById(R.id.musicbar_text_caption);
         progressBar = view.findViewById(R.id.musicbar_progressbar);
 
+
         playPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,19 +54,37 @@ public class MusicBarFragment extends Fragment implements StationState.Listening
             @Override
             public void onClick(View v) {
 
-                // TODO: make this button add / remove from spotify library
-                MainActivity.spotifyApiController.addTrackToSavedTracks(StationState.listeningStation.songId, new Callback() {
-                    @Override
-                    public void success(Object o, Response response) {
-                        Toast.makeText(getContext(), "Saved to your Library", Toast.LENGTH_SHORT).show();
-                    }
+                if(!addRemoveButton.isChecked()){
+//                    Log.d("saveTrack", "addRemoveButtonIsChecked" + addRemoveButton.isChecked());
+                    MainActivity.spotifyApiController.removeTrackFromSavedTracks(StationState.listeningStation.songId, new Callback() {
+                        @Override
+                        public void success(Object o, Response response) {
+                            Toast.makeText(getContext(), "Removed from your Library", Toast.LENGTH_SHORT).show();
+                            addRemoveButton.setChecked(false);
+                        }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        Toast.makeText(getContext(), "Failure", Toast.LENGTH_SHORT).show();
-                    }
-                });
-//                Toast.makeText(getContext(), "Should add / remove from spotify library", Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void failure(RetrofitError error) {
+
+                        }
+                    });
+
+                }
+                else{
+//                    Log.d("saveTrack", "addRemoveButtonIsChecked" + addRemoveButton.isChecked());
+                    MainActivity.spotifyApiController.addTrackToSavedTracks(StationState.listeningStation.songId, new Callback() {
+                        @Override
+                        public void success(Object o, Response response) {
+                            Toast.makeText(getContext(), "Saved to your Library", Toast.LENGTH_SHORT).show();
+                            addRemoveButton.setChecked(true);
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            Toast.makeText(getContext(), "Failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
 
             }
         });
@@ -104,6 +124,25 @@ public class MusicBarFragment extends Fragment implements StationState.Listening
     }
 
     /*
+     * Saved Tracks
+     */
+
+    private void UpdateAddRemoveButton(){
+        MainActivity.spotifyApiController.containsTrackMySavedTracks(StationState.listeningStation.songId, new Callback<boolean[]>() {
+            @Override
+            public void success(boolean[] isSaved, Response response) {
+                addRemoveButton.setChecked(isSaved[0]);
+//                Log.d("saveTrack", "isSaved: " + isSaved[0]);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    /*
      * Currently playing song events
      */
 
@@ -121,6 +160,8 @@ public class MusicBarFragment extends Fragment implements StationState.Listening
 
         playPauseButton.setAlpha(playPauseButton.isEnabled() ? 1 : 0.5f);
         addRemoveButton.setAlpha(addRemoveButton.isEnabled() ? 1 : 0.5f);
+
+        Log.d("saveTrack", "insideupdate");
     }
 
     private void UpdateProgressBarFromOtherThread () {
@@ -144,11 +185,13 @@ public class MusicBarFragment extends Fragment implements StationState.Listening
     }
 
     @Override
-    public void OnListeningStationStart() {}
+    public void OnListeningStationStart() {
+    }
 
     @Override
     public void OnListeningSongChange(StationState stationState) {
         UpdateStationState (stationState, StationState.userWantsToPlay);
+        UpdateAddRemoveButton();
     }
 
     @Override

@@ -48,8 +48,15 @@ public class SpotifyApiController {
     }
 
     public void addTrackToSavedTracks(String trackId, Callback callback){
-
         mSpotifyService.addToMySavedTracks(trackId, callback);
+    }
+
+    public void containsTrackMySavedTracks(String trackId, Callback callback){
+        mSpotifyService.containsMySavedTracks(trackId, callback);
+    }
+
+    public void removeTrackFromSavedTracks(String trackId, Callback callback){
+        mSpotifyService.removeFromMySavedTracks(trackId, callback);
     }
 
     public String getCurrentSongUri(){

@@ -42,7 +42,14 @@ public class SpotifyLoginActivity extends Activity{
     public void spotifyLoginClicked(View V){
         final AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 
-        builder.setScopes(new String[]{"user-read-private", "user-read-currently-playing","streaming", "user-read-playback-state", "user-library-modify"});
+        builder.setScopes(new String[]{
+                "user-read-private",
+                "user-read-currently-playing",
+                "streaming",
+                "user-read-playback-state",
+                "user-library-modify",
+                "user-library-read"
+        });
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
