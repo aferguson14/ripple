@@ -13,6 +13,10 @@ import android.widget.ToggleButton;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
 /**
  * Created by peterwerner on 6/1/17.
  */
@@ -49,8 +53,18 @@ public class MusicBarFragment extends Fragment implements StationState.Listening
             public void onClick(View v) {
 
                 // TODO: make this button add / remove from spotify library
+                MainActivity.spotifyApiController.addTrackToSavedTracks(StationState.listeningStation.songId, new Callback() {
+                    @Override
+                    public void success(Object o, Response response) {
+                        Toast.makeText(getContext(), "Saved to your Library", Toast.LENGTH_SHORT).show();
+                    }
 
-                Toast.makeText(getContext(), "Should add / remove from spotify library", Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Toast.makeText(getContext(), "Failure", Toast.LENGTH_SHORT).show();
+                    }
+                });
+//                Toast.makeText(getContext(), "Should add / remove from spotify library", Toast.LENGTH_SHORT).show();
 
             }
         });

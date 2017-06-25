@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyCallback;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.CurrentlyPlaying;
 import retrofit.Callback;
@@ -46,8 +47,9 @@ public class SpotifyApiController {
         mSpotifyService.addTracksToPlaylist(userId, playlistId, map1, map2);
     }
 
-    private void updatedatabase(){
-        //FB code
+    public void addTrackToSavedTracks(String trackId, Callback callback){
+
+        mSpotifyService.addToMySavedTracks(trackId, callback);
     }
 
     public String getCurrentSongUri(){
