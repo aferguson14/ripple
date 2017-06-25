@@ -231,6 +231,8 @@ public class MainActivity extends AppCompatActivity implements StationState.List
     @Override
     public void onDestroy() {
         super.onDestroy();
+        FirebaseHelper.GetInstance().deleteBroadcast(myUserId);
+        isBroadcasting=false;
         Spotify.destroyPlayer(this);
         StationState.UnsubscribeFromListeningStationUpdates(this);
     }
