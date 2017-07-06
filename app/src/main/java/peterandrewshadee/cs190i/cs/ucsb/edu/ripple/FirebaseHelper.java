@@ -114,6 +114,7 @@ class FirebaseHelper {
                     bc.setSongId(currentlyPlaying.item.id);
                     bc.setSongName(currentlyPlaying.item.name);
                     bc.setArtist(currentlyPlaying.item.artists.get(0).name);
+                    bc.setAlbumUrlLarge(currentlyPlaying.item.album.images.get(0).url);
                     bc.setIs_playing(currentlyPlaying.is_playing);
                     bc.setDuration_ms(currentlyPlaying.item.duration_ms);
                     bc.setProgress_ms((long)(currentlyPlaying.progress_ms));
@@ -168,6 +169,7 @@ class FirebaseHelper {
                                 bc.setSongId(currentlyPlaying.item.id);
                                 bc.setSongName(currentlyPlaying.item.name);
                                 bc.setArtist(currentlyPlaying.item.artists.get(0).name);
+                                bc.setAlbumUrlLarge(currentlyPlaying.item.album.images.get(0).url);
                                 bc.setIs_playing(currentlyPlaying.is_playing);
                                 bc.setDuration_ms(currentlyPlaying.item.duration_ms);
                                 bc.setProgress_ms((long)(currentlyPlaying.progress_ms));
@@ -199,16 +201,17 @@ class FirebaseHelper {
         dbr.child("progress_ms").setValue(broadcast.getProgress_ms());
         dbr.child("songName").setValue(broadcast.getSongName());
         dbr.child("songId").setValue(broadcast.getSongId());
+        dbr.child("albumUrlLarge").setValue(broadcast.getAlbumUrlLarge());
     }
 
-    void updateBroadcast(User broadcaster, Broadcast broadcast) {
-        DatabaseReference dbr = broadcasts.child(broadcaster.getUserId());
-        dbr.child("artist").setValue(broadcast.getArtist());
-        dbr.child("duration_ms").setValue(broadcast.getDuration_ms());
-        dbr.child("is_playing").setValue(broadcast.getIs_playing());
-        dbr.child("progress_ms").setValue(broadcast.getProgress_ms());
-        dbr.child("songName").setValue(broadcast.getSongName());
-    }
+//    void updateBroadcast(User broadcaster, Broadcast broadcast) {
+//        DatabaseReference dbr = broadcasts.child(broadcaster.getUserId());
+//        dbr.child("artist").setValue(broadcast.getArtist());
+//        dbr.child("duration_ms").setValue(broadcast.getDuration_ms());
+//        dbr.child("is_playing").setValue(broadcast.getIs_playing());
+//        dbr.child("progress_ms").setValue(broadcast.getProgress_ms());
+//        dbr.child("songName").setValue(broadcast.getSongName());
+//    }
 
     void updateBroadcastMetadata(String broadcasterId, Broadcast broadcast) {
         DatabaseReference dbr = broadcasts.child(broadcasterId);
@@ -217,6 +220,7 @@ class FirebaseHelper {
 //        dbr.child("is_playing").setValue(broadcast.getIs_playing());
         dbr.child("songName").setValue(broadcast.getSongName());
         dbr.child("songId").setValue(broadcast.getSongId());
+        dbr.child("albumUrlLarge").setValue(broadcast.getAlbumUrlLarge());
 
         StationState.NotifyBroadcastStationDataChanged();
     }

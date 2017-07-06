@@ -24,6 +24,7 @@ import java.util.Set;
 public class StationState {
     String userId, userName=""; // Spotify user broadcasting
     String songId, songTitle="", songArtist=""; // Song currently playing
+    String albumArtUrl=""; //Album art url
     boolean isPlaying = false;
     long songDurationMs, songProgressMs; // Total length and current position of song
     List<String> listenerIds = new ArrayList<>();
@@ -41,6 +42,7 @@ public class StationState {
         this.songId = songId;
         this.songTitle = songTitle;
         this.songArtist = songArtist;
+        this.albumArtUrl = albumArtUrl;
         this.isPlaying = isPlaying;
         this.songDurationMs = songDurationMs;
         this.songProgressMs = songProgressMs;
@@ -53,6 +55,7 @@ public class StationState {
         this.songId = _stationState.songId;
         this.songTitle = _stationState.songTitle;
         this.songArtist = _stationState.songArtist;
+        this.albumArtUrl = _stationState.albumArtUrl;
         this.isPlaying = _stationState.isPlaying;
         this.songDurationMs = _stationState.songDurationMs;
         this.songProgressMs = _stationState.songProgressMs;
@@ -65,6 +68,7 @@ public class StationState {
         this.songId = broadcast.getSongId();
         this.songTitle = broadcast.getSongName();
         this.songArtist = broadcast.getArtist();
+        this.albumArtUrl = broadcast.getAlbumUrlLarge();
         this.isPlaying = broadcast.getIs_playing() != null && broadcast.getIs_playing().booleanValue();
         this.songDurationMs = broadcast.getDuration_ms() != null ? broadcast.getDuration_ms() : 0;
         this.songProgressMs = broadcast.getProgress_ms() != null ? broadcast.getProgress_ms() : 0;

@@ -1,12 +1,22 @@
 package peterandrewshadee.cs190i.cs.ucsb.edu.ripple;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * Created by peterwerner on 6/5/17.
@@ -15,11 +25,13 @@ import android.widget.Toast;
 public class BroadcastFragment extends Fragment implements StationState.BroadcastStationUpdateListener {
 
     TextView textSong, textArtist, textCaption;
+    ImageView albumArt;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_broadcast, container, false);
 
+        albumArt = (ImageView) view.findViewById(R.id.broadcaster_album_art);
         textSong = (TextView) view.findViewById(R.id.broadcaster_song_title);
         textArtist = (TextView) view.findViewById(R.id.broadcaster_song_artist);
         textCaption = (TextView) view.findViewById(R.id.broadcaster_text_caption);
@@ -50,7 +62,9 @@ public class BroadcastFragment extends Fragment implements StationState.Broadcas
     public void OnBroadcastStationStart() {}
 
     @Override
-    public void OnBroadcastSongChange(StationState stationState) {}
+    public void OnBroadcastSongChange(StationState stationState) {
+        Picasso.with(getContext()).load(stationState.albumArtUrl).into(albumArt);
+    }
 
     @Override
     public void OnBroadcastSongUpdate(StationState stationState) {
@@ -61,4 +75,5 @@ public class BroadcastFragment extends Fragment implements StationState.Broadcas
 
     @Override
     public void OnBroadcastStationDie() {}
+
 }

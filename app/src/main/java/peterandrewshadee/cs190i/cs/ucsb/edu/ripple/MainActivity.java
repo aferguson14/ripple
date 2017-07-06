@@ -138,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements StationState.List
                         else if(state.getState()==PlaybackState.STATE_PLAYING)
                             bc.setIs_playing(true);
                         FirebaseHelper.GetInstance().updateBroadcastPlayState(myUserId, bc);
+
+                        Log.d("NotificationListener", "stateToString: " + state.toString());
                         Log.d("NotificationListener", "STATEPOS: " + state.getPosition());
                     }
                 }
@@ -153,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements StationState.List
                         bc.setDuration_ms(metadata.getLong(METADATA_KEY_DURATION));
                         bc.setSongName(metadata.getString(METADATA_KEY_TITLE));
 
-                        StationState.UpdateBroadcastStation(new StationState(bc));
+//                        StationState.UpdateBroadcastStation(new StationState(bc));
 
                         MainActivity.spotifyApiController.fetchCurrentlyPlaying(new Callback<CurrentlyPlaying>(){
                             //CurrentlyPlaying attributes: timestamp, progress_ms, item (current track), is_playing
@@ -161,8 +163,10 @@ public class MainActivity extends AppCompatActivity implements StationState.List
                             public void success(CurrentlyPlaying currentlyPlaying, Response response) {
                                 if(currentlyPlaying != null) {
                                     bc.setSongId(currentlyPlaying.item.id);
-                                    Log.d("NotificationListener", "songid: " + currentlyPlaying.item.id);
+                                    bc.setAlbumUrlLarge(currentlyPlaying.item.album.images.get(0).url);
+                                    StationState.UpdateBroadcastStation(new StationState(bc));
                                     FirebaseHelper.GetInstance().updateBroadcastMetadata(myUserId, bc);
+
                                 }
                                 else
                                     Log.d("restapi", "FAILURE");

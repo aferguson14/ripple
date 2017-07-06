@@ -11,15 +11,16 @@ import java.util.Map;
 
 
 public class Broadcast {
-//TODO : change progress to be a long
     private String id;
     private String userName;
     private String songId;
     private String songName;
     private String artist;
+    private String albumUrlLarge;
     private Boolean is_playing;
     private Long duration_ms;
     private Long progress_ms;
+
 //    private List<String> listeners;
     private Map<String, String> listeners;
 
@@ -79,6 +80,13 @@ public class Broadcast {
     }
     public void setArtist(String artist) {
         this.artist = artist;
+    }
+
+    public String getAlbumUrlLarge() {
+        return albumUrlLarge;
+    }
+    public void setAlbumUrlLarge(String albumUrlLarge) {
+        this.albumUrlLarge = albumUrlLarge;
     }
 
     public Boolean getIs_playing() {
