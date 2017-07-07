@@ -22,24 +22,18 @@
 
         <TextView
             android:id="@+id/stationlist_item_text_song"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""/>
-
-        <TextView
-            android:id="@+id/stationlist_item_text_dot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="  •  "/>
-
-        <TextView
-            android:id="@+id/stationlist_item_text_artist"
+            android:singleLine="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scrollHorizontally="true"
-            android:ellipsize="end"
-            android:maxLines="1"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="100000"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:freezesText="true"
+            android:textColor="@android:color/white"
             android:text=""/>
+
 
     </LinearLayout>
 

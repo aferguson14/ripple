@@ -25,7 +25,7 @@ import java.net.URL;
 
 public class BroadcastFragment extends Fragment implements StationState.BroadcastStationUpdateListener {
 
-    TextView textSong, textArtist, textCaption;
+    TextView textSongAndArtist, textCaption;
     ImageView albumArt;
 
     @Override
@@ -33,8 +33,9 @@ public class BroadcastFragment extends Fragment implements StationState.Broadcas
         final View view = inflater.inflate(R.layout.fragment_broadcast, container, false);
 
         albumArt = (ImageView) view.findViewById(R.id.broadcaster_album_art);
-        textSong = (TextView) view.findViewById(R.id.broadcaster_song_title);
-        textArtist = (TextView) view.findViewById(R.id.broadcaster_song_artist);
+        textSongAndArtist = (TextView) view.findViewById(R.id.broadcaster_song_title_and_artist);
+        textSongAndArtist.setSelected(true);
+//        textArtist = (TextView) view.findViewById(R.id.broadcaster_song_artist);
         textCaption = (TextView) view.findViewById(R.id.broadcaster_text_caption);
 
         view.findViewById(R.id.broadcaster_button_stop).setOnClickListener(new View.OnClickListener() {
@@ -70,8 +71,8 @@ public class BroadcastFragment extends Fragment implements StationState.Broadcas
 
     @Override
     public void OnBroadcastSongUpdate(StationState stationState) {
-        textSong.setText(stationState.songTitle);
-        textArtist.setText(stationState.songArtist);
+        textSongAndArtist.setText(stationState.songTitle + "  •  " + stationState.songArtist);
+//        textArtist.setText(stationState.songArtist);
         textCaption.setText(stationState.listenerIds.size() + " listeners");
     }
 

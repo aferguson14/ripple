@@ -38,9 +38,9 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder implements Stati
             int colorText = isFocused ? Color.WHITE : ContextCompat.getColor(itemView.getContext(), R.color.colorPrimaryDark);
 
             itemView.findViewById(R.id.stationlist_item_container).setBackgroundColor(colorAccent);
-            ((TextView)itemView.findViewById(R.id.stationlist_item_text_dot)).setTextColor(colorText);
+//            ((TextView)itemView.findViewById(R.id.stationlist_item_text_dot)).setTextColor(colorText);
             ((TextView)itemView.findViewById(R.id.stationlist_item_text_song)).setTextColor(colorText);
-            ((TextView)itemView.findViewById(R.id.stationlist_item_text_artist)).setTextColor(colorText);
+//            ((TextView)itemView.findViewById(R.id.stationlist_item_text_artist)).setTextColor(colorText);
             ((TextView)itemView.findViewById(R.id.stationlist_item_text_caption)).setTextColor(colorText);
 
             if (isFocused != wasFocused && position != null) {

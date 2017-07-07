@@ -82,8 +82,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
         recyclerViewHolder.position = position;
         recyclerViewHolder.UpdateFocus(true);
 
-        ((TextView)holder.itemView.findViewById(R.id.stationlist_item_text_song)).setText(b.getSongName());
-        ((TextView)holder.itemView.findViewById(R.id.stationlist_item_text_artist)).setText(b.getArtist());
+        ((TextView)holder.itemView.findViewById(R.id.stationlist_item_text_song)).setText(b.getSongName() + "  •  " + b.getArtist());
+//        ((TextView)holder.itemView.findViewById(R.id.stationlist_item_text_artist)).setText(b.getArtist());
         String caption = "";
         if (b.getUserName() != null)
             caption += b.getUserName();
