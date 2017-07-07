@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +85,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
         recyclerViewHolder.UpdateFocus(true);
 
         ((TextView)holder.itemView.findViewById(R.id.stationlist_item_text_song)).setText(b.getSongName() + "  •  " + b.getArtist());
+        Picasso.with(mParent.getContext()).load(b.getAlbumUrlLarge()).noPlaceholder().into((ImageView)holder.itemView.findViewById(R.id.stationlist_album_art));
 //        ((TextView)holder.itemView.findViewById(R.id.stationlist_item_text_artist)).setText(b.getArtist());
         String caption = "";
         if (b.getUserName() != null)
@@ -90,7 +93,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
         else
             caption += b.getId();
         if (b.getListeners() != null) {
-            caption += " and " + b.getListeners().size() + " listeners";
+            caption += "  |  " + b.getListeners().size() + " listeners";
         }
         else {
             caption += " and 0 listeners";
