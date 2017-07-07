@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         /*
             MEDIA CONTROLLER
          */
+
         if(StationState.broadcastStation!=null)
             isBroadcasting = true;
         else

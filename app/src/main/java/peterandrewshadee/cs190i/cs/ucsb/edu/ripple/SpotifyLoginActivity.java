@@ -2,9 +2,13 @@ package peterandrewshadee.cs190i.cs.ucsb.edu.ripple;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -40,19 +44,26 @@ public class SpotifyLoginActivity extends Activity{
     }
 
     public void spotifyLoginClicked(View V){
-        final AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 
-        builder.setScopes(new String[]{
-                "user-read-private",
-                "user-read-currently-playing",
-                "streaming",
-                "user-read-playback-state",
-                "user-library-modify",
-                "user-library-read"
-        });
-        AuthenticationRequest request = builder.build();
+        if(NotificationManagerCompat.getEnabledListenerPackages(getApplicationContext()).contains(getApplicationContext().getPackageName())) {
+            final AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+            builder.setScopes(new String[]{
+                    "user-read-private",
+                    "user-read-currently-playing",
+                    "streaming",
+                    "user-read-playback-state",
+                    "user-library-modify",
+                    "user-library-read"
+            });
+            AuthenticationRequest request = builder.build();
+
+            AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "Must Allow Notification Access for Ripple", Toast.LENGTH_LONG).show();
+            startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
+        }
     }
 
     @Override
