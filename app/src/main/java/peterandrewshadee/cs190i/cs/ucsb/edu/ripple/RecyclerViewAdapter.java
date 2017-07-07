@@ -19,6 +19,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot != null) {
+                    Log.d("StationsListFragment", "if statement");
                     broadcastList.clear();
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         try {
@@ -45,11 +48,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
                             if (bc != null) {
                                 broadcastList.add(bc);
                                 notifyDataSetChanged();
+
                                 Log.d("stationslist", "broadcast update");
                             }
                         } catch (DatabaseException e) {
 
                         }
+                    }
+                    if(broadcastList.isEmpty()){
+                        notifyDataSetChanged();
                     }
                 }
             }
@@ -68,15 +75,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.d("StationsListFragment", "inside onCreateViewHolder");
         mParent = parent;
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_item_stationlist, parent, false);
         RecyclerView.ViewHolder holder = new RecyclerViewHolder(view, this);
+
         return holder;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        Log.d("StationsListFragment", "inside onBindViewHolder");
         final Broadcast b = broadcastList.get(position);
 
         RecyclerViewHolder recyclerViewHolder = (RecyclerViewHolder)holder;
