@@ -21,27 +21,17 @@
             <ImageView
                 android:src="@drawable/ic_broadcast"
                 android:layout_gravity="center"
-                android:layout_marginBottom="16dp"
+                android:layout_margin="8dp"
                 android:layout_height="50dp"
                 android:layout_width="50dp"/>
 
-            <TextView
-                android:id="@+id/broadcaster_text_caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|center_horizontal"
-                android:scrollHorizontally="true"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@android:color/white"
-                android:text=""/>
 
             <ImageView
                 android:id="@+id/broadcaster_album_art"
+                android:layout_width="340dp"
+                android:layout_height="340dp"
                 android:layout_gravity="center"
-                android:layout_margin="16dp"
-                android:layout_height="250dp"
-                android:layout_width="250dp"/>
+                android:layout_margin="16dp" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -51,7 +41,6 @@
                 android:layout_marginBottom="8dp"
                 android:layout_gravity="center"
                 android:layout_weight="1">
-
 
 
                 <LinearLayout
@@ -85,6 +74,17 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/broadcaster_text_caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|center_horizontal"
+                    android:scrollHorizontally="true"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@android:color/white"
+                    android:text=""/>
+
             </LinearLayout>
 
 
@@ -98,7 +98,8 @@
         android:layout_gravity="center"
         android:rotation="45"
         android:layout_weight="0"
-        android:layout_margin="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         android:layout_height="50dp"
         android:layout_width="50dp"/>
 

@@ -164,9 +164,8 @@ public class MainActivity extends AppCompatActivity implements StationState.List
                                 if(currentlyPlaying != null) {
                                     bc.setSongId(currentlyPlaying.item.id);
                                     bc.setAlbumUrlLarge(currentlyPlaying.item.album.images.get(0).url);
-                                    StationState.UpdateBroadcastStation(new StationState(bc));
                                     FirebaseHelper.GetInstance().updateBroadcastMetadata(myUserId, bc);
-
+                                    StationState.UpdateBroadcastStation(new StationState(bc));
                                 }
                                 else
                                     Log.d("restapi", "FAILURE");
@@ -238,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements StationState.List
         FirebaseHelper.GetInstance().deleteBroadcast(myUserId);
         isBroadcasting=false;
         Spotify.destroyPlayer(this);
+        StationState.UpdateBroadcastStation(null);
         StationState.UnsubscribeFromListeningStationUpdates(this);
     }
 

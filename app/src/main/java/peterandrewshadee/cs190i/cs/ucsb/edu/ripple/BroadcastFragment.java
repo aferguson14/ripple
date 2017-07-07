@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,18 +60,19 @@ public class BroadcastFragment extends Fragment implements StationState.Broadcas
     }
 
     @Override
-    public void OnBroadcastStationStart() {}
+    public void OnBroadcastStationStart() {
+    }
 
     @Override
     public void OnBroadcastSongChange(StationState stationState) {
-        Picasso.with(getContext()).load(stationState.albumArtUrl).into(albumArt);
+        Picasso.with(getContext()).load(stationState.albumArtUrl).noPlaceholder().into(albumArt);
     }
 
     @Override
     public void OnBroadcastSongUpdate(StationState stationState) {
         textSong.setText(stationState.songTitle);
         textArtist.setText(stationState.songArtist);
-        textCaption.setText("Broadcasting to " + stationState.listenerIds.size() + " listeners");
+        textCaption.setText(stationState.listenerIds.size() + " listeners");
     }
 
     @Override

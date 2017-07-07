@@ -122,16 +122,15 @@ class FirebaseHelper {
                     broadcasts.child(broadcasterId).setValue(bc);
 
                     //new stationstate w/listener
-                    DatabaseReference dbr = FirebaseHelper.GetInstance().getBroadcastRef().child(MainActivity.myUserId);
+                    DatabaseReference dbr = FirebaseHelper.GetInstance().broadcasts.child(MainActivity.myUserId);
                     dbr.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot != null) {
-                                    newBroadcast = dataSnapshot.getValue(Broadcast.class);
+                                newBroadcast = dataSnapshot.getValue(Broadcast.class);
                                 if(newBroadcast!=null) {
                                     StationState.UpdateBroadcastStation(new StationState(newBroadcast));
                                 }
-
                             }
                         }
                         @Override
@@ -202,6 +201,7 @@ class FirebaseHelper {
         dbr.child("songName").setValue(broadcast.getSongName());
         dbr.child("songId").setValue(broadcast.getSongId());
         dbr.child("albumUrlLarge").setValue(broadcast.getAlbumUrlLarge());
+        StationState.UpdateBroadcastStation(new StationState(broadcast));
     }
 
 //    void updateBroadcast(User broadcaster, Broadcast broadcast) {
@@ -217,12 +217,9 @@ class FirebaseHelper {
         DatabaseReference dbr = broadcasts.child(broadcasterId);
         dbr.child("artist").setValue(broadcast.getArtist());
         dbr.child("duration_ms").setValue(broadcast.getDuration_ms());
-//        dbr.child("is_playing").setValue(broadcast.getIs_playing());
         dbr.child("songName").setValue(broadcast.getSongName());
         dbr.child("songId").setValue(broadcast.getSongId());
         dbr.child("albumUrlLarge").setValue(broadcast.getAlbumUrlLarge());
-
-        StationState.NotifyBroadcastStationDataChanged();
     }
 
     void updateBroadcastPlayState(String broadcasterId, Broadcast broadcast){

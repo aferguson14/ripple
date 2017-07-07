@@ -52,30 +52,6 @@ public class BroadcastIntroFragment extends Fragment {
                 if (OpenSpotifyApp()) {
                     FirebaseHelper.GetInstance().addBroadcast(MainActivity.myUserId);
 
-
-
-//                    DatabaseReference dbr = FirebaseHelper.GetInstance().getBroadcastRef().child(MainActivity.myUserId);
-//                    dbr.addValueEventListener(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(DataSnapshot dataSnapshot) {
-//                            if (dataSnapshot != null) {{
-//                                    Broadcast bc = dataSnapshot.getValue(Broadcast.class);
-//                                    Log.d("introbroadcast", bc.toString());
-//                                    StationState.UpdateBroadcastStation(new StationState(bc));
-//                                    StationState.NotifyBroadcastStationDataChanged();
-//                                }
-//                            }
-//                        }
-//                        @Override
-//                        public void onCancelled(DatabaseError databaseError) {
-//                            Log.d("getBroadcasts", "db error: " + databaseError.getMessage());
-//                        }
-//                    });
-//
-
-
-
-
                     MainActivity.isBroadcasting = true;
                 } else {
                     Toast.makeText(v.getContext(), "You must have the Spotify app installed.", Toast.LENGTH_SHORT).show();

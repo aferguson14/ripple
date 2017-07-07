@@ -33,10 +33,9 @@ public class StationState {
 //        this.userId = userId;
 //        this.songId = songId;
 //
-//        // TODO need to fetch the song title / username etc? web API? store in DB?
 //    }
 
-    public StationState(String userId, String userName, String songId, String songTitle, String songArtist, Boolean isPlaying, Long songDurationMs, Long songProgressMs, List<String> listenerIds) {
+    public StationState(String userId, String userName, String songId, String songTitle, String songArtist, String albumArtUrl, Boolean isPlaying, Long songDurationMs, Long songProgressMs, List<String> listenerIds) {
         this.userId = userId;
         this.userName = userName;
         this.songId = songId;
@@ -194,9 +193,9 @@ public class StationState {
     public static void UpdateBroadcastStation (StationState newStation) {
         StationState prevStation = null;
         if (broadcastStation != null) {
-            if (listeningStation != null) {
-                //UpdateListeningStation(null);
-            }
+//            if (listeningStation != null) {
+//                //UpdateListeningStation(null);
+//            }
             prevStation = new StationState(broadcastStation);
         }
 
@@ -205,6 +204,7 @@ public class StationState {
         } else {
             broadcastStation = null;
         }
+
 
         if (newStation == null) {
             for (BroadcastStationUpdateListener listener : broadcastStationListeners) {
